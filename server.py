@@ -17,6 +17,14 @@ while True:
     request = client_socket.recv(1024).decode()
     print(request)
 
+
+    # parse request
+    request_line = request.split('\n')[0]
+    method, path, version = request_line.split()
+
+    print("Method: ", method)
+    print("Path: ", path)
+
     response = "HTTP/1.1 200 OK\n\nHello World"
 
     client_socket.send(response.encode())
