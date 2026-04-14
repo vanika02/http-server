@@ -1,4 +1,5 @@
 import socket
+import json
 
 HOST = '127.0.0.1'
 PORT = 8080
@@ -19,7 +20,7 @@ while True:
     if not request:
         client_socket.close()
         continue
-    
+
     print(request)
 
 
@@ -34,7 +35,11 @@ while True:
     elif path == "/about":
         body = "About page"
     elif path == "/api":
-        body = "API Endpoints"
+        body = json.dumps({
+            "name": "Vanika",
+            "role": "Backroom anhilator"
+        })
+        content_type= "application/json"
     else:
         body = "404 not found"
 
