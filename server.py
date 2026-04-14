@@ -9,7 +9,7 @@ server_socket.bind((HOST, PORT))
 
 server_socket.listen(1)
 
-print(f"Server running on http://{HOST}/{PORT}")
+print(f"server running on http://{HOST}:{PORT}")
 
 while True:
     client_socket, client_address = server_socket.accept()
