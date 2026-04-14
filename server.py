@@ -15,6 +15,11 @@ while True:
     client_socket, client_address = server_socket.accept()
 
     request = client_socket.recv(1024).decode()
+
+    if not request:
+        client_socket.close()
+        continue
+    
     print(request)
 
 
