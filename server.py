@@ -22,6 +22,16 @@ while True:
     request_line = request.split('\n')[0]
     method, path, version = request_line.split()
 
+    # routing
+    if path == "/":
+        body = "Hello vanika"
+    elif path == "/about":
+        body = "About page"
+    elif path == "/api":
+        body = "API Endpoints"
+    else:
+        body = "404 not found"
+
     print("Method: ", method)
     print("Path: ", path)
 
