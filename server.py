@@ -35,7 +35,7 @@ while True:
     print("Method: ", method)
     print("Path: ", path)
 
-    response = "HTTP/1.1 200 OK\n\nHello World"
+    response = "HTTP/1.1 200 OK\n\n{body}"
 
     client_socket.send(response.encode())
 
