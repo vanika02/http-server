@@ -25,6 +25,7 @@ while True:
     # routing
     if path == "/":
         body = "Hello vanika"
+        content_type = "text/plain"
     elif path == "/about":
         body = "About page"
     elif path == "/api":
@@ -35,7 +36,7 @@ while True:
     print("Method: ", method)
     print("Path: ", path)
 
-    response = "HTTP/1.1 200 OK\n\n{body}"
+    response = f"HTTP/1.1 200 OK\n\n{body}"
 
     client_socket.send(response.encode())
 
