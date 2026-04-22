@@ -56,7 +56,9 @@ while True:
     # print("Path: ", path)
 
     response = (
-        
+        f"HTTP/1.1 {status}\n"
+        f"Content-Type: {content_type}\n\n"
+        f"{body}"
     )
 
     client_socket.send(response.encode())
