@@ -1,14 +1,17 @@
-from handlers import home, about, api, not_found
+from handlers import home, about, api, not_found, login
 
-def route(path):
-    if path == "/":
+def route(method, path, body=""):
+    if method == "GET" and path == "/":
         return home()
     
-    elif path =="/about":
+    elif method == "GET" and  path =="/about":
         return about()
 
-    elif path == "/api":
+    elif method == "GET" and  path == "/api":
         return api()
+    
+    elif method == "POST" and path == "/login":
+        return login(body)
     
     else:
         return not_found()

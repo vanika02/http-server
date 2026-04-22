@@ -27,7 +27,14 @@ while True:
     request_line = request.split('\n')[0]
     method, path, version = request_line.split()
 
-    status, content_type, body = route(path)
+
+    parts = request.split("\n\n")
+    body = ""
+    
+    if len(parts) > 1:
+        body = parts[1].strip()
+
+    status, content_type, response_body = route(method, path, body)
 
     # print("Method: ", method)
     # print("Path: ", path)
@@ -35,7 +42,7 @@ while True:
     response = (
         f"HTTP/1.1 {status}\n"
         f"Content-Type: {content_type}\n\n"
-        f"{body}"
+        f"{response_body}"
     )
 
     client_socket.send(response.encode())

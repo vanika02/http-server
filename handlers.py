@@ -13,6 +13,9 @@ def api():
     }
     return "200 OK", "application/json", json.dumps(data)
 
+def login(body):
+    return "200 OK", "application/json", f'{{"message":"Welcome {body}"}}'
+
 
 def not_found():
     return "404 You can't see me", "text/plain", "404 Not Found"
