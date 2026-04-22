@@ -34,6 +34,7 @@ while True:
         content_type = "text/plain"
     elif path == "/about":
         body = "About page"
+        content_type = "text/plain"
     elif path == "/api":
         body = json.dumps({
             "name": "Vanika",
