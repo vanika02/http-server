@@ -11,8 +11,8 @@ def api():
         "name" : "Dharampal the great",
         "role" : "Tuzya ichi"
     }
-    return "200 OK", "application/json", json.dump(data)
+    return "200 OK", "application/json", json.dumps(data)
 
-    
+
 def not_found():
     return "404 You can't see me", "text/plain", "404 Not Found"
