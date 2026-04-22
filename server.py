@@ -32,22 +32,32 @@ while True:
     if path == "/":
         body = "Hello vanika"
         content_type = "text/plain"
+        status = "200 ok"
+
     elif path == "/about":
         body = "About page"
         content_type = "text/plain"
+        status = "200 ok"
+
     elif path == "/api":
         body = json.dumps({
             "name": "Vanika",
             "role": "Backroom anhilator"
         })
         content_type= "application/json"
+        status = "200 ok"
+    
     else:
         body = "404 not found"
+        content_type = "text/plain"
+        status = "404 Not Found"
 
-    print("Method: ", method)
-    print("Path: ", path)
+    # print("Method: ", method)
+    # print("Path: ", path)
 
-    response = f"HTTP/1.1 200 OK\n\n{body}"
+    response = (
+        
+    )
 
     client_socket.send(response.encode())
 
