@@ -16,6 +16,10 @@ while True:
 
     request = client_socket.recv(1024).decode()
 
+    print("RAW REQUEST:")
+    print(repr(request))
+
+
     if not request:
         client_socket.close()
         continue
@@ -28,7 +32,7 @@ while True:
     method, path, version = request_line.split()
 
 
-    parts = request.split("\n\n")
+    parts = request.split("\r\n\r\n")
     body = ""
     
     if len(parts) > 1:
@@ -36,8 +40,8 @@ while True:
 
     status, content_type, response_body = route(method, path, body)
 
-    # print("Method: ", method)
-    # print("Path: ", path)
+    print("Method: ", method)
+    print("Path: ", path)
 
     response = (
         f"HTTP/1.1 {status}\n"
