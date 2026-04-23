@@ -16,8 +16,21 @@ def api():
     return "200 OK", "application/json", json.dumps(data)
 
 def login(body):
-    return "200 OK", "application/json", f'{{"message":"Welcome {body}"}}'
+    data = json.loads(body)
 
+    username = data.get("username")
+    password = data.get("password")
+
+    if username in users and users[username] == password:
+        return "200 OK", "application/json", json.dumps({
+            "message": "Login success"
+        }) 
+
+    else:
+        return "401 Unauthorized", "application/json", json.dumps({
+            "message": "Invalid credentials"
+        })
+    
 def signup(body):
     data = json.loads(body)
 
@@ -39,6 +52,6 @@ def signup(body):
     return "201 created", "application/json", json.dumps({
         "message": "User created"
     })
-    
+
 def not_found():
     return "404 You can't see me", "text/plain", "404 Not Found"
