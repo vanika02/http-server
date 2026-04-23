@@ -30,3 +30,28 @@ I wanted to understand what frameworks like Flask and FastPI abstract away, incl
 - Modular architecture using seperate files
 - Basic in-memory user storage
 
+## Tech Stack
+- Python 3 
+- socket module
+- json module
+
+## Project Structure 
+
+ ```
+http-server/ 
+├── server.py
+├── router.py 
+├── handlers.py 
+└── README.md
+```
+
+## How to run
+
+```
+python3 server.py
+```
+
+## Then open
+```
+http://localhost:8080
+```
