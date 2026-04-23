@@ -16,8 +16,8 @@ while True:
 
     request = client_socket.recv(1024).decode()
 
-    print("RAW REQUEST:")
-    print(repr(request))
+    # print("RAW REQUEST:")
+    # print(repr(request))
 
 
     if not request:
@@ -40,8 +40,8 @@ while True:
 
     status, content_type, response_body = route(method, path, body)
 
-    print("Method: ", method)
-    print("Path: ", path)
+    # print("Method: ", method)
+    # print("Path: ", path)
 
     response = (
         f"HTTP/1.1 {status}\n"
