@@ -32,12 +32,17 @@ def login(body):
         })
     
 def signup(body):
+    # print("SIGNUP bodyyy yadddyy yadddyyy:" , repr(body))
     data = json.loads(body)
+
 
     username = data.get("username")
     password = data.get("password")
 
-    if not username or password:
+    # print("STEP 3 username:", username)
+    # print("STEP 4 password:", password)
+
+    if not username and password:
         return "400 Bad Request", "application/json", json.dumps({
             "message": "Missing username or password"
         })

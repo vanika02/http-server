@@ -32,16 +32,18 @@ while True:
     method, path, version = request_line.split()
 
 
-    parts = request.split("\r\n\r\n")
+    parts = request.split("\r\n\r\n", 1)
     body = ""
     
     if len(parts) > 1:
         body = parts[1].strip()
 
     status, content_type, response_body = route(method, path, body)
-
+    
     # print("Method: ", method)
     # print("Path: ", path)
+    # print("Body=", repr(body))
+
 
     response = (
         f"HTTP/1.1 {status}\n"
