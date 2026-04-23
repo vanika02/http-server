@@ -55,3 +55,44 @@ python3 server.py
 ```
 http://localhost:8080
 ```
+
+## Example Requests
+
+### GET
+```
+curl http://localhost:8080/api
+```
+
+### Signup
+```
+curl -X POST http://localhost:8080/signup \
+-H "Content-Type: application/json" \
+-d '{"username":"name","password":"password"}'
+```
+### Login
+```
+curl -X POST http://localhost:8080/login \
+-H "Content-Type: application/json" \
+-d '{"username":"name","password":"password"}'
+```
+
+## Concepts Learned
+- HTTP protocol basics
+- Request parsing
+- Status codes
+- Content-Type headers
+- Routing systems
+- Authentication flow basics
+- Debugging raw network requests
+- Future Improvements
+- Multi-threaded request handling
+- Persistent database storage
+- Password hashing
+- JWT authentication
+- Static file serving
+- Better HTTP compliance
+
+
+## Key Learning Outcome
+
+Building this project helped me understand how backend frameworks operate internally instead of only consuming abstractions.
