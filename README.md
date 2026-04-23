@@ -14,3 +14,19 @@ I wanted to understand what frameworks like Flask and FastPI abstract away, incl
 - Basic server architecture
 
 ## Features
+
+- Handles raw TCP socket connections
+- Parses HTTP requests
+- Supports GET routes:
+    - /
+    - /about
+    - /api
+
+- Supports POST requests
+    - /signup
+    - /login
+
+- Returs JSON responses
+- Modular architecture using seperate files
+- Basic in-memory user storage
+
