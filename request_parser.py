@@ -11,6 +11,22 @@ class HTTPRequest:
         path (str): Requested path
         http_version (str): HTTP version
     """
+
+    def __init__(self, raw_request: str):
+        """
+        Initialize an HTTPRequest object.
+
+        Args: 
+            raw_request (str): Raw HTTP request string.
+        """
+
+        self.raw_request = raw_request.strip()
+        self.headers = {}
+        self.body = ""
+        self.method = ""
+        self.path = ""
+        self.http_version = ""
+        self._parse()
     
 
 
