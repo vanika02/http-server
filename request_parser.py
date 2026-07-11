@@ -54,6 +54,8 @@ class HTTPRequest:
                 key, value = line.split(':', 1)
                 self.headers[key.strip()] = value.strip()
 
+    def _repr_(self):
+        return f"HTTPRequest(method='{self.method}', path='{self.path}', headers={len(self.headers)} items)"
         
 
 
