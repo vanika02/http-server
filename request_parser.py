@@ -27,7 +27,35 @@ class HTTPRequest:
         self.path = ""
         self.http_version = ""
         self._parse()
-    
+
+    def _parse(self):
+        """Parse the raw HTTP request into its components."""
+
+        # split the request into headers and body
+        parts = self.raw_request.split('\n\n', 1)
+        headers_section = parts[0]
+        self.body = parts[1] if len(parts) > 1 else ""
+
+        # split headers into lines
+        header_lines = headers_section.split('\n')
+
+        # parse the request line (first line)
+        if header_lines:
+            request_line = header_lines[0].split(' ')
+            if len(request_line) >= 3:
+                self.method = request_line[0]
+                self.path = request_line[1]
+                self.http_version = request_line[2]
+
+        
+        # parse the headers 
+        for line in header_lines[1:]:
+            if ":" in line:
+                key, value = line.split(':', 1)
+                self.headers[key.strip()] = value.strip()
+
+        
+
 
 
 
