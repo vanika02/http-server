@@ -1,5 +1,3 @@
-from http_parse import parse
-
 class HTTPRequest:
     """
     A class representing an HTTP request.
