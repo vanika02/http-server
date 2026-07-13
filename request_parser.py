@@ -32,12 +32,12 @@ class HTTPRequest:
         """Parse the raw HTTP request into its components."""
 
         # split the request into headers and body
-        parts = self.raw_request.split('\n\n', 1)
+        parts = self.raw_request.split('\r\n\r\n', 1)
         headers_section = parts[0]
         self.body = parts[1] if len(parts) > 1 else ""
 
         # split headers into lines
-        header_lines = headers_section.split('\n')
+        header_lines = headers_section.split('\r\n')
 
         # parse the request line (first line)
         if header_lines:
