@@ -20,7 +20,7 @@ class HTTPRequest:
             raw_request (str): Raw HTTP request string.
         """
 
-        self.raw_request = raw_request.strip()
+        self.raw_request = raw_request
         self.headers = {}
         self.body = ""
         self.method = ""
