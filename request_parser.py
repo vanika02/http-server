@@ -41,7 +41,7 @@ class HTTPRequest:
 
         # parse the request line (first line)
         if header_lines:
-            request_line = header_lines[0].split(' ')
+            request_line = header_lines[0].split()
             if len(request_line) >= 3:
                 self.method = request_line[0]
                 self.path = request_line[1]
