@@ -26,6 +26,10 @@ class HTTPRequest:
         self.http_version = ""
         self._parse()
 
+    def _read_body(self, sock: socket.socket, headers: raw_request, body_intial: bytes) -> bytes:
+        return body
+        
+         
     def _parse(self):
         """Parse the raw HTTP request into its components."""
 
