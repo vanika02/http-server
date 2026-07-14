@@ -26,10 +26,8 @@ class HTTPRequest:
         self.http_version = ""
         self._parse()
 
-    def _read_body(self, sock: socket.socket, headers: raw_request, body_intial: bytes) -> bytes:
-        return body
         
-         
+
     def _parse(self):
         """Parse the raw HTTP request into its components."""
 
@@ -56,6 +54,18 @@ class HTTPRequest:
                 key, value = line.split(':', 1)
                 self.headers[key.strip()] = value.strip()
 
+
+    def _read_body(self, sock: socket.socket, headers: raw_request, body_intial: bytes) -> bytes:
+        """Extract body from POST request, Parse out the content-length value"""
+        content-length=0
+        for line in headers_text.split("\r\n"):
+            if line.lower().startswith("content-length:"):
+                content-length = int(line.split":", 1)[1].strip()
+                break
+        
+        print(f"[parsed body size]: {content_length} bytes")
+        
+        return body
     def __repr__(self):
         return f"HTTPRequest(method='{self.method}', path='{self.path}', headers={len(self.headers)} items)"
         
