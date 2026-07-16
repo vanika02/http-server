@@ -50,13 +50,13 @@ def _read_until_content_length(sock) -> bytes:
 while True:
     client_socket, client_address = server_socket.accept()
 
-    request = _read_until_content_length(client_socket)
+    raw_request = _read_until_content_length(client_socket)
 
     # print("RAW REQUEST:")
     # print(repr(request))
 
 
-    if not request:
+    if not raw_request:
         client_socket.close()
         continue
 
@@ -64,11 +64,13 @@ while True:
 
 
     # parse request
-    parsed_req = 
+    request = HTTPRequest(raw_request)
     # request_line = request.split('\n')[0]
     # method, path, version = request_line.split()
 
-
+    method = request.method
+    path = request.path
+    headers = request.headers
     # parts = request.split("\r\n\r\n", 1)
     # body = ""
     
