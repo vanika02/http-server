@@ -58,17 +58,17 @@ class HTTPRequest:
                 self.headers[key.strip()] = value.strip()
 
 
-    def _read_body(self, sock: socket.socket, headers: raw_request, body_intial: bytes) -> bytes:
+    def _read_until_content_length(sock: socket.socket) -> bytes:
 
         """Extract body from POST request, Parse out the content-length value"""
 
-        content-length=0
-        for line in headers_text.split("\r\n"):
-            if line.lower().startswith("content-length:"):
-                content-length = int(line.split":", 1)[1].strip()
-                break
-        
-        print(f"[parsed body size]: {content_length} bytes")
+        # read the header completly until the \r\n\r\n boundary
+        header_buffer = bytearray()
+        while b"\r\n\r\n" not in header_buffer:
+            chunk = sock.recv(4096)
+            if not chunk:
+                raise ConnectionError("Socket closed while reading headers.")
+            header_buffer.extend(chunk)
         
         return body
     def __repr__(self):
