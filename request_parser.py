@@ -74,6 +74,11 @@ class HTTPRequest:
         header_bytes, body_buffer = header_buffer.split(b"\r\n\r\n", 1)
         header_text = header_bytes.decode("uft-8", errors="ignore")
 
+        # extract content-length value using regex
+        match = re.search(r"Content-Length:\s*(\d+)", header_text, re.IGNORECASE)
+        if not match:
+            raise ValueError("Content-Length header is not found in the protocol.")
+            
 
     def __repr__(self):
         return f"HTTPRequest(method='{self.method}', path='{self.path}', headers={len(self.headers)} items)"
