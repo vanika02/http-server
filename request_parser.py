@@ -31,7 +31,7 @@ class HTTPRequest:
 
         
 
-    def _parse(self):
+    def _parse_request(self):
         """Parse the raw HTTP request into its components."""
 
         # split the request into headers and body
@@ -56,42 +56,6 @@ class HTTPRequest:
             if ":" in line:
                 key, value = line.split(':', 1)
                 self.headers[key.strip()] = value.strip()
-
-
-    def _read_until_content_length(sock: socket.socket) -> bytes:
-
-        """Extract body from POST request, Parse out the content-length value"""
-
-        # read the header completly until the \r\n\r\n boundary
-        header_buffer = bytearray()
-        while b"\r\n\r\n" not in header_buffer:
-            chunk = sock.recv(4096)
-            if not chunk:
-                raise ConnectionError("Socket closed while reading headers.")
-            header_buffer.extend(chunk)
-        
-        # seperate the header section from any early body data
-        header_bytes, body_buffer = header_buffer.split(b"\r\n\r\n", 1)
-        header_text = header_bytes.decode("uft-8", errors="ignore")
-
-        # extract content-length value using regex
-        match = re.search(r"Content-Length:\s*(\d+)", header_text, re.IGNORECASE)
-        if not match:
-            raise ValueError("Content-Length header is not found in the protocol.")
-        
-        content_length = int(match.group(1))
-
-        # read the remaining body data based on the content-length
-        remaining_bytes = content_length - len(body_buffer)
-
-        while remaining_bytes > 0:
-            chunk = sock.recv(min(4096, remaining_bytes))
-            if not chunk:
-                raise ConnectionError("Socket closed before full content was read.")
-            body_buffer.extend(chunk)
-            remaining_bytes -= len(chunk)
-        
-        return bytes(body_buffer)
 
     def __repr__(self):
         return f"HTTPRequest(method='{self.method}', path='{self.path}', headers={len(self.headers)} items)"
