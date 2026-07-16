@@ -1,6 +1,7 @@
 import socket
 import json
 from router import route
+from request_parser import HTTPRequest
 
 HOST = '127.0.0.1'
 PORT = 8080
