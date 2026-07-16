@@ -95,6 +95,7 @@ while True:
     client_socket.send(response.encode())
 
     connection = request.headers.get("Connection", "").lower()
+    # print(connection)
 
     if request.http_version == "HTTP/1.1":
         keep_alive = connection != "close"
@@ -105,5 +106,5 @@ while True:
     if not keep_alive:
         break
 
-        
+
     client_socket.close()
