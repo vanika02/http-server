@@ -1,6 +1,3 @@
-import socket
-import re
-
 class HTTPRequest:
     """
     A class representing an HTTP request.
@@ -27,7 +24,7 @@ class HTTPRequest:
         self.method = ""
         self.path = ""
         self.http_version = ""
-        self._parse()
+        self._parse_request()
 
         
 
@@ -41,24 +38,33 @@ class HTTPRequest:
 
         # split headers into lines
         header_lines = headers_section.split('\r\n')
+        if not header_lines:
+            return 
 
         # parse the request line (first line)
-        if header_lines:
-            request_line = header_lines[0].split()
-            if len(request_line) >= 3:
-                self.method = request_line[0]
-                self.path = request_line[1]
-                self.http_version = request_line[2]
-
+        request_line = header_lines[0].split()
+        if len(request_line) >= 3:
+            self.method = request_line[0]
+            self.path = request_line[1]
+            self.http_version = request_line[2]
+        
+        else:
+            raise ValueError("Malformed HTTP request line")
         
         # parse the headers 
         for line in header_lines[1:]:
-            if ":" in line:
-                key, value = line.split(':', 1)
-                self.headers[key.strip()] = value.strip()
+            if ":" not in line:
+                continue
+            key, value = line.split(':', 1)
+            self.headers[key.strip()] = value.strip()
 
     def __repr__(self):
-        return f"HTTPRequest(method='{self.method}', path='{self.path}', headers={len(self.headers)} items)"
+        return (
+            f"HTTPRequest("
+            f"method={self.method}, "
+            f"path={self.path}, "
+            f"header={len(self.headers)})"
+        )
         
 
 

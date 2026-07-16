@@ -2,6 +2,8 @@ import socket
 import json
 from router import route
 from request_parser import HTTPRequest
+import socket
+import re
 
 HOST = '127.0.0.1'
 PORT = 8080
@@ -60,7 +62,7 @@ while True:
         client_socket.close()
         continue
 
-    print(request)
+    print(raw_request)
 
 
     # parse request
@@ -77,11 +79,11 @@ while True:
     # if len(parts) > 1:
     #     body = parts[1].strip()
 
-    # status, content_type, response_body = route(method, path, body)
+    status, content_type, response_body = route(method, path, body)
     
-    # print("Method: ", method)
-    # print("Path: ", path)
-    # print("Body=", repr(body))
+    print("Method: ", method)
+    print("Path: ", path)
+    print("Body=", repr(body))
 
 
     response = (
