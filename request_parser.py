@@ -78,7 +78,20 @@ class HTTPRequest:
         match = re.search(r"Content-Length:\s*(\d+)", header_text, re.IGNORECASE)
         if not match:
             raise ValueError("Content-Length header is not found in the protocol.")
-            
+        
+        content_length = int(match.group(1))
+
+        # read the remaining body data based on the content-length
+        remaining_bytes = content_length - len(body_buffer)
+
+        while remaining_bytes > 0:
+            chunk = sock.recv(min(4096, remaining_bytes))
+            if not chunk:
+                raise ConnectionError("Socket closed before full content was read.")
+            body_buffer.extend(chunk)
+            remaining_bytes -= len(chunk)
+        
+        return bytes(body_buffer)
 
     def __repr__(self):
         return f"HTTPRequest(method='{self.method}', path='{self.path}', headers={len(self.headers)} items)"
