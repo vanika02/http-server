@@ -30,7 +30,7 @@ def _read_until_content_length(sock) -> bytes:
         return ""
     
     # seperate the header section from any early body data
-    header_bytes, body_buffer = header_buffer.split(b"\r\n\r\n", 1)
+    header_bytes, body = header_buffer.split(b"\r\n\r\n", 1)
     header_text = header_bytes.decode()
 
     content_length = 0
@@ -75,17 +75,9 @@ while True:
     # parse request
     request = HTTPRequest(raw_request)
 
-    # request_line = request.split('\n')[0]
-    # method, path, version = request_line.split()
-
     method = request.method
     path = request.path
-    headers = request.headers
-    # parts = request.split("\r\n\r\n", 1)
-    # body = ""
-    
-    # if len(parts) > 1:
-    #     body = parts[1].strip()
+    body = request.body
 
     status, content_type, response_body = route(method, path, body)
     
@@ -101,4 +93,17 @@ while True:
     )
 
     client_socket.send(response.encode())
+
+    connection = request.headers.get("Connection", "").lower()
+
+    if request.http_version == "HTTP/1.1":
+        keep_alive = connection != "close"
+    
+    else:
+        keep_alive = connection == "keep-alive"
+    
+    if not keep_alive:
+        break
+
+        
     client_socket.close()
