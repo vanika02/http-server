@@ -70,7 +70,11 @@ class HTTPRequest:
                 raise ConnectionError("Socket closed while reading headers.")
             header_buffer.extend(chunk)
         
-        return body
+        # seperate the header section from any early body data
+        header_bytes, body_buffer = header_buffer.split(b"\r\n\r\n", 1)
+        header_text = header_bytes.decode("uft-8", errors="ignore")
+
+
     def __repr__(self):
         return f"HTTPRequest(method='{self.method}', path='{self.path}', headers={len(self.headers)} items)"
         
