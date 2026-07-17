@@ -12,12 +12,13 @@ class HTTPResponse:
         500: "Internal Server Error"
     }
 
-    def __init__(self, status_code=200, headers=None, body=""):
+    def __init__(self, status_code=200, headers=None, body="", http_version="HTTP/1.1"):
 
+        self.http_version = http_version
         self.status_code = status_code
-        self.reason = self.STATUS_CODES[status_code]
+        self.reason = self.STATUS_CODES.get(status_code, "Unknown Status")
 
-        self.headers = headers or {}
+        self.headers = headers.copy() if headers else {}
 
         self.body = body
 
