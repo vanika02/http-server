@@ -1,8 +1,9 @@
 import socket
+
 from router import route
 from request_parser import HTTPRequest
 from http_response import HTTPResponse
-import re
+
 
 HOST = '127.0.0.1'
 PORT = 8080
