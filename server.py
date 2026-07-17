@@ -87,13 +87,16 @@ while True:
     print("Body=", repr(body))
 
 
-    response = (
-        f"HTTP/1.1 {status}\n"
-        f"Content-Type: {content_type}\n\n"
-        f"{response_body}"
+    response = HTTPResponse(
+        status_code=status,
+        body=response_body,
+        headers={
+            "Content-Type": content_type,
+            "Connection": "close"
+        }
     )
 
-    client_socket.send(response.encode())
+    client_socket.send(response.build())
 
     connection = request.headers.get("Connection", "").lower()
     # print(connection)
