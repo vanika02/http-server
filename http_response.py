@@ -2,6 +2,10 @@ class HTTPResponse:
 
     STATUS_CODES = {
         200: "OK",
+        201: "Created",
+        400: "Bad Request",
+        401: "Unauthorized",
+        403: "Forbidden",
         404: "Not Found",
         500: "Internal Server Error"
     }
@@ -34,6 +38,6 @@ class HTTPResponse:
 
         return "\r\n".join(lines).encode()
 
-        
+
 # current questions are why headers are {}
 # init function explanation, self  and this line self.reason = self.STATUS_CODES[status_code]
