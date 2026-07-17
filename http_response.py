@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 class HTTPResponse:
 
     STATUS_CODES = {
@@ -23,23 +25,52 @@ class HTTPResponse:
         self.body = body
 
     def build(self):
+        
+        body_bytes = self.body.encode("utf-8")
 
-        lines = []
+        self.headers.setdefault(
+            "Content-Length",
+            str(len(body_bytes))
+        )
 
-        lines.append(
-            f"HTTP/1.1 {self.status_code} {self.reason}"
+        self.headers.setdefault(
+            "Content-Type",
+            "text/plain; charset=utf-8"
+        )
+
+        self.headers.setdefault(
+            "Connection",
+            "close"
+        )
+
+        self.headers.setdefault(
+            "Server",
+            "VanikaHTTP/1.1"
+        )
+
+        self.headers.setdefault(
+            "Date",
+            datetime.now(timezone.utc).strftime(
+                "%a, %d, %b, %Y %H:%M:%S GMT"
+            )
+        )
+
+        response = []
+
+        response.append(
+            f"{self.http_version} {self.status_code} {self.reason}"
         )
 
         for key, value in self.headers.items():
-            lines.append(
+            response.append(
                 f"{key}: {value}"
             )
         
-        lines.append("")
+        response.append("")
 
-        lines.append(self.body)
+        header_bytes = "\r\n".join(response).encode("utf-8")
 
-        return "\r\n".join(lines).encode()
+        return header_bytes + b"\r\n" + body_bytes
 
 
 # current questions are why headers are {}
