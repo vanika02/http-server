@@ -14,3 +14,26 @@ class HTTPResponse:
         self.headers = headers or {}
 
         self.body = body
+
+    def build(self):
+
+        lines = []
+
+        lines.append(
+            f"HTTP/1.1 {self.status_code} {self.reason}"
+        )
+
+        for key, value in self.headers.items():
+            lines.append(
+                f"{key}: {value}"
+            )
+        
+        lines.append("")
+
+        lines.append(self.body)
+
+        return "\r\n".join(lines).encode()
+
+        
+# current questions are why headers are {}
+# init function explanation, self  and this line self.reason = self.STATUS_CODES[status_code]
