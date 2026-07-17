@@ -2,7 +2,6 @@ import socket
 from router import route
 from request_parser import HTTPRequest
 from http_response import HTTPResponse
-import socket
 import re
 
 HOST = '127.0.0.1'
