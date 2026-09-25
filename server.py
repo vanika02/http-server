@@ -75,7 +75,7 @@ while True:
             method, path, body
         )
 
-        status = HTTPResponse(
+        response = HTTPResponse(
             status_code=status,
             body=response_body,
             headers={
