@@ -32,6 +32,8 @@ def _read_until_content_length(sock) -> bytes:
     
     # seperate the header section from any early body data
     header_bytes, body = header_buffer.split(b"\r\n\r\n", 1)
+    body = bytearray(body)
+
     header_text = header_bytes.decode()
 
     content_length = 0
@@ -66,6 +68,11 @@ while True:
             continue 
         
         request = HTTPRequest(raw_request)
+
+        print("Method:", request.method)
+        print("Path:", request.path)
+        print("Expected body length:", 50000)
+        print("Actual parsed body length:", len(request.body))
 
         method = request.method
         path = request.path
