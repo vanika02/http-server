@@ -79,7 +79,7 @@ while True:
             status_code=status,
             body=response_body,
             headers={
-                "Content-Type": content-type,
+                "Content-Type": content_type,
                 "Connection": "close"
             },
         )
