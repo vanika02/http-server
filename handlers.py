@@ -43,7 +43,7 @@ def signup(body):
     # print("STEP 4 password:", password)
 
     if not username and not password:
-        return "400 Bad Request", "application/json", json.dumps({
+        return "400", "application/json", json.dumps({
             "message": "Missing username or password"
         })
 
