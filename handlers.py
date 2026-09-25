@@ -54,7 +54,7 @@ def signup(body):
     
     users[username] = password
 
-    return "201 created", "application/json", json.dumps({
+    return "201", "application/json", json.dumps({
         "message": "User created"
     })
 
