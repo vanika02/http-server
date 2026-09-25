@@ -48,7 +48,7 @@ def signup(body):
         })
 
     if username in users:
-        return "409 confilct", "application/json", json.dumps({
+        return "409", "application/json", json.dumps({
             "message": "User already exists"
         })
     
