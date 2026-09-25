@@ -22,7 +22,7 @@ def login(body):
     password = data.get("password")
 
     if username in users and users[username] == password:
-        return "200 OK", "application/json", json.dumps({
+        return "200", "application/json", json.dumps({
             "message": "Login success"
         }) 
 
