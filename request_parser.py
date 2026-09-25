@@ -56,7 +56,7 @@ class HTTPRequest:
             if ":" not in line:
                 continue
             key, value = line.split(':', 1)
-            self.headers[key.strip()] = value.strip()
+            self.headers[key.strip().lower()] = value.strip()
 
     def __repr__(self):
         return (
