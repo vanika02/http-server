@@ -27,7 +27,7 @@ def login(body):
         }) 
 
     else:
-        return "401 Unauthorized", "application/json", json.dumps({
+        return "401", "application/json", json.dumps({
             "message": "Invalid credentials"
         })
     
