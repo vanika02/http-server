@@ -55,3 +55,36 @@ def _read_until_content_length(sock) -> bytes:
     )
 
     return raw_request.decode(errors="ignore")
+
+while True:
+    client_socket, client_address = server_socket.accept()
+
+    try: 
+        raw_request = _read_until_content_length(client_socket)
+
+        if not raw_request:
+            continue 
+        
+        request = HTTPRequest(raw_request)
+
+        method = request.method
+        path = request.path
+        body = request.body
+
+        status, content_type, response_body = route(
+            method, path, body
+        )
+
+        status = HTTPResponse(
+            status_code=status,
+            body=response_body,
+            headers={
+                "Content-Type": content-type,
+                "Connection": "close"
+            },
+        )
+
+        client_socket.sendall(response.build())
+
+    finally:
+        client_socket.close()
