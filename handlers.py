@@ -32,30 +32,12 @@ def login(body):
         })
     
 def signup(body):
-    data = json.loads(body)
-
-
-    username = data.get("username")
-    password = data.get("password")
-
-    # print("STEP 3 username:", username)
-    # print("STEP 4 password:", password)
-
-    if not username and not password:
-        return "400", "application/json", json.dumps({
-            "message": "Missing username or password"
+    try:
+        data = json.loads(body)
+    except json.JSONDecodeError:
+        return 400, "application/json", json.dumps({
+            "message": "Invalid JSON"
         })
-
-    if username in users:
-        return "409", "application/json", json.dumps({
-            "message": "User already exists"
-        })
-    
-    users[username] = password
-
-    return "201", "application/json", json.dumps({
-        "message": "User created"
-    })
 
 def not_found():
     return "404 You can't see me", "text/plain", "404 Not Found"
