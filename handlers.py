@@ -39,5 +39,25 @@ def signup(body):
             "message": "Invalid JSON"
         })
 
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return 400, "application/json", json.dumps({
+            "message": "Missing username or password"
+        })
+    
+    if username is users:
+        return 409, "application/json", json.dumps({
+            "message": "User already exists"
+        })
+    
+    users[username] = password
+
+    return 201, "application/json", json.dumps({
+        "message": "User created"
+    })
+
+    
 def not_found():
     return "404 You can't see me", "text/plain", "404 Not Found"
