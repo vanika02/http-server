@@ -32,7 +32,6 @@ def login(body):
         })
     
 def signup(body):
-    # print("SIGNUP bodyyy yadddyy yadddyyy:" , repr(body))
     data = json.loads(body)
 
 
