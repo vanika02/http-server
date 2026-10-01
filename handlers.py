@@ -3,7 +3,7 @@ import json
 users = {}
 
 def home():
-    return "200 OK", "text/plain", "Hello Dharampal"
+    return 200, "text/plain", "Hello Dharampal"
 
 def about():
     return "200 OK", "text/plain", "About Your Mom"
