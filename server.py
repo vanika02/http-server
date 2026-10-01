@@ -59,6 +59,9 @@ def _read_until_content_length(sock, buffer) -> bytes:
         + request_body
     )
 
+    buffer.clear()
+    buffer.extend(leftover)
+
     return raw_request.decode(errors="ignore")
 
 while True:
