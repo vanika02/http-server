@@ -48,12 +48,15 @@ def _read_until_content_length(sock, buffer) -> bytes:
 
         if not chunk:
             break 
-        body.extend(chunk)
+        remaining.extend(chunk)
     
+    request_body = remaining[:content_length]
+    leftover = remaining[content_length:]
+
     raw_request = (
         header_bytes
         + b"\r\n\r\n"
-        + body
+        + request_body
     )
 
     return raw_request.decode(errors="ignore")
