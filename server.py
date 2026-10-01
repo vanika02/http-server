@@ -43,7 +43,7 @@ def _read_until_content_length(sock, buffer) -> bytes:
             content_length = int(line.split(":", 1)[1].strip())
             break
     
-    while len(body) < content_length:
+    while len(remaining) < content_length:
         chunk = sock.recv(4096)
 
         if not chunk:
