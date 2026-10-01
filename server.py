@@ -15,7 +15,7 @@ server_socket.listen(1)
 print(f"server running on http://{HOST}:{PORT}")
 
 
-def _read_until_content_length(sock) -> bytes:
+def _read_until_content_length(sock, buffer) -> bytes:
 
     """Extract body from POST request, Parse out the content-length value"""
 
