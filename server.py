@@ -21,13 +21,13 @@ def _read_until_content_length(sock, buffer) -> bytes:
 
     # read the header completly until the \r\n\r\n boundary
     header_buffer = bytearray()
-    while b"\r\n\r\n" not in header_buffer:
+    while b"\r\n\r\n" not in buffer:
         chunk = sock.recv(4096)
         if not chunk:
             raise ConnectionError("Socket closed while reading headers.")
-        header_buffer.extend(chunk)
+        buffer.extend(chunk)
     
-    if not header_buffer:
+    if not buffer:
         return ""
     
     # seperate the header section from any early body data
