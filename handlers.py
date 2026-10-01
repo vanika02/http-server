@@ -42,17 +42,22 @@ def signup(body):
     username = data.get("username")
     password = data.get("password")
 
+
     if not username or not password:
         return 400, "application/json", json.dumps({
             "message": "Missing username or password"
         })
     
-    if username is users:
+    if username in users:
+        print("USER ALREADY EXISTS")
         return 409, "application/json", json.dumps({
             "message": "User already exists"
         })
     
+
     users[username] = password
+
+    print("USERS AFTER:", users)
 
     return 201, "application/json", json.dumps({
         "message": "User created"

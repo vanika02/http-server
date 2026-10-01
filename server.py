@@ -73,6 +73,7 @@ while True:
         print("Path:", request.path)
         print("Expected body length:", 50000)
         print("Actual parsed body length:", len(request.body))
+        print("Content-Length header:", request.headers.get("content-length"))
 
         method = request.method
         path = request.path
