@@ -49,7 +49,7 @@ def signup(body):
         })
     
     if username in users:
-        print("USER ALREADY EXISTS")
+        # print("USER ALREADY EXISTS")
         return 409, "application/json", json.dumps({
             "message": "User already exists"
         })
