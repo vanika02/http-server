@@ -65,4 +65,4 @@ def signup(body):
 
     
 def not_found():
-    return "404 You can't see me", "text/plain", "404 Not Found"
+    return 404, "text/plain", "404 Not Found"
