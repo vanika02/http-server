@@ -13,7 +13,7 @@ def api():
         "name" : "Dharampal the great",
         "role" : "Tuzya ichi"
     }
-    return "200 OK", "application/json", json.dumps(data)
+    return 200, "application/json", json.dumps(data)
 
 def login(body):
     data = json.loads(body)
