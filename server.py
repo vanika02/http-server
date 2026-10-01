@@ -62,7 +62,7 @@ def _read_until_content_length(sock, buffer) -> bytes:
     buffer.clear()
     buffer.extend(leftover)
 
-    return raw_request.decode(errors="ignore")
+    return raw_request
 
 while True:
     client_socket, client_address = server_socket.accept()
