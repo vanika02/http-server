@@ -73,7 +73,6 @@ def _read_until_content_length(sock, buffer) -> bytes:
 while True:
     client_socket, client_address = server_socket.accept()
 
-
     try: 
         buffer = bytearray()
         raw_request = _read_until_content_length(client_socket, buffer)
