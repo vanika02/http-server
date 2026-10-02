@@ -42,14 +42,18 @@ def _read_until_content_length(sock, buffer) -> bytes:
 
     for line in header_text.split("\r\n"):
         if line.lower().startswith("content-length:"):
-            content_length = int(line.split(":", 1)[1].strip())
+            content_length = int(
+                line.split(":", 1)[1].strip()
+            )
             break
     
     while len(remaining) < content_length:
         chunk = sock.recv(4096)
 
         if not chunk:
-            break 
+           raise ConnectionError(
+            "Socket closed before complete request body."
+           )
         remaining.extend(chunk)
     
     request_body = remaining[:content_length]
