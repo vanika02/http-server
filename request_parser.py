@@ -4,7 +4,7 @@ class HTTPRequest:
 
     Attributes:
         headers (dict): Dictionary of HTTP headers.
-        body (str): Request body.
+        body (bytes): Request body.
         method (str): HTTP method (GET, POST, etc.)
         path (str): Requested path
         http_version (str): HTTP version
@@ -15,7 +15,7 @@ class HTTPRequest:
         Initialize an HTTPRequest object.
 
         Args: 
-            raw_request (str): Raw HTTP request string.
+            raw_request (bytes): Raw HTTP request string.
         """
 
         self.raw_request = raw_request
