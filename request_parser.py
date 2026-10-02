@@ -20,7 +20,7 @@ class HTTPRequest:
 
         self.raw_request = raw_request
         self.headers: dict[str, str] = {}
-        self.body = ""
+        self.body: bytes = b""
         self.method = ""
         self.path = ""
         self.http_version = ""
