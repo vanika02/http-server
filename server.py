@@ -17,7 +17,7 @@ print(f"server running on http://{HOST}:{PORT}")
 
 def _read_until_content_length(sock, buffer) -> bytes:
 
-    """Extract body from POST request, Parse out the content-length value"""
+    """Read and extract exactly one HTTP request."""
 
     # read the header completly until the \r\n\r\n boundary
     header_buffer = bytearray()
