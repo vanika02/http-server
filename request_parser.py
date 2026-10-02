@@ -10,7 +10,7 @@ class HTTPRequest:
         http_version (str): HTTP version
     """
 
-    def __init__(self, raw_request: str):
+    def __init__(self, raw_request: bytes):
         """
         Initialize an HTTPRequest object.
 
