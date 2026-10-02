@@ -57,7 +57,7 @@ class HTTPRequest:
                 continue
             key, value = line.split(b":", 1)
             self.headers[
-                key.strip().decode.lower()
+                key.strip().decode().lower()
             ] = value.strip().decode()
 
     def __repr__(self):
