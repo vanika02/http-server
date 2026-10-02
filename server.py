@@ -29,8 +29,11 @@ def _read_until_content_length(sock, buffer) -> bytes:
 
         buffer.extend(chunk)
     
-    # seperate the header section from any early body data
-    header_bytes, remaining = buffer.split(b"\r\n\r\n", 1)
+    header_bytes, remaining = buffer.split(
+        b"\r\n\r\n",
+         1
+    )
+
     remaining = bytearray(remaining)
 
     header_text = header_bytes.decode()
