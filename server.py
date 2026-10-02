@@ -75,9 +75,15 @@ while True:
 
     try: 
         buffer = bytearray()
-        raw_request = _read_until_content_length(client_socket, buffer)
+
+        while True:
+            raw_request = _read_until_content_length(
+                client_socket,
+                buffer
+            )
+
         if not raw_request:
-            continue 
+            break
         
         request = HTTPRequest(raw_request)
 
