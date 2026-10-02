@@ -19,7 +19,6 @@ def _read_until_content_length(sock, buffer) -> bytes:
 
     """Read and extract exactly one HTTP request."""
 
-    header_buffer = bytearray()
     while b"\r\n\r\n" not in buffer:
         chunk = sock.recv(4096)
 
