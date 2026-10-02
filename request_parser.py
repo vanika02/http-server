@@ -55,7 +55,7 @@ class HTTPRequest:
         for line in header_lines[1:]:
             if b":" not in line:
                 continue
-            key, value = line.split(b"":", 1)
+            key, value = line.split(b":", 1)
             self.headers[
                 key.strip().decode.lower()
             ] = value.strip().decode()
