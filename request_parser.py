@@ -44,9 +44,9 @@ class HTTPRequest:
         request_line = header_lines[0].split()
 
         if len(request_line) >= 3:
-            self.method = request_line[0]
-            self.path = request_line[1]
-            self.http_version = request_line[2]
+            self.method = request_line[0].decode()
+            self.path = request_line[1].decode()
+            self.http_version = request_line[2].decode()
         
         else:
             raise ValueError("Malformed HTTP request line")
