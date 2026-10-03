@@ -85,7 +85,7 @@ while True:
                 buffer
             )
 
-            if not raw_request:
+            if not raw_request is None:
                 break
             
             request = HTTPRequest(raw_request)
