@@ -109,7 +109,7 @@ while True:
                 body=response_body,
                 headers={
                     "Content-Type": content_type,
-                    "Connection": "keep-alive"
+                    "Connection": "close"
                 },
             )
 
