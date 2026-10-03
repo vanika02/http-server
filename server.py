@@ -8,11 +8,12 @@ from http_response import HTTPResponse
 HOST = '127.0.0.1'
 PORT = 8080
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind((HOST, PORT))
-server_socket.listen(1)
+def run_server(host=HOST, port=PORT):
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((HOST, PORT))
+    server_socket.listen(1)
 
-print(f"server running on http://{HOST}:{PORT}")
+    print(f"server running on http://{HOST}:{PORT}")
 
 
 def _read_until_content_length(sock, buffer) -> bytes:
