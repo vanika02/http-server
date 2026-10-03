@@ -74,7 +74,7 @@ def run_server(host=HOST, port=PORT):
     server_socket.listen(1)
 
     print(f"server running on http://{HOST}:{PORT}")
-    
+
     while True:
         client_socket, client_address = server_socket.accept()
 
@@ -127,3 +127,6 @@ def run_server(host=HOST, port=PORT):
 
         finally:
             client_socket.close()
+
+if __name__ == "__main__":
+    run_server()
