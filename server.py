@@ -8,12 +8,6 @@ from http_response import HTTPResponse
 HOST = '127.0.0.1'
 PORT = 8080
 
-def run_server(host=HOST, port=PORT):
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((HOST, PORT))
-    server_socket.listen(1)
-
-    print(f"server running on http://{HOST}:{PORT}")
 
 
 def _read_until_content_length(sock, buffer) -> bytes:
@@ -74,55 +68,62 @@ def _read_until_content_length(sock, buffer) -> bytes:
 
     return raw_request
 
-while True:
-    client_socket, client_address = server_socket.accept()
+def run_server(host=HOST, port=PORT):
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((HOST, PORT))
+    server_socket.listen(1)
 
-    try: 
-        buffer = bytearray()
+    print(f"server running on http://{HOST}:{PORT}")
+    
+    while True:
+        client_socket, client_address = server_socket.accept()
 
-        while True:
-            raw_request = _read_until_content_length(
-                client_socket,
-                buffer
-            )
+        try: 
+            buffer = bytearray()
 
-            if raw_request is None:
-                break
-            
+            while True:
+                raw_request = _read_until_content_length(
+                    client_socket,
+                    buffer
+                )
 
-            request = HTTPRequest(raw_request)
+                if raw_request is None:
+                    break
+                
 
-            connection = request.headers.get("connection", "").lower()
-            if request.http_version == "HTTP/1.1":
-                should_close = connection == "close"
-            else:
-                should_close = connection != "keep-alive"
+                request = HTTPRequest(raw_request)
 
-            print("Method:", request.method)
-            print("Path:", request.path)
-            print("Expected body length:", request.headers.get("content-length"))
-            print("Actual parsed body length:", len(request.body))
-            print("Content-Length header:", request.headers.get("content-length"))
+                connection = request.headers.get("connection", "").lower()
+                if request.http_version == "HTTP/1.1":
+                    should_close = connection == "close"
+                else:
+                    should_close = connection != "keep-alive"
 
-            method = request.method
-            path = request.path
-            body = request.body
+                print("Method:", request.method)
+                print("Path:", request.path)
+                print("Expected body length:", request.headers.get("content-length"))
+                print("Actual parsed body length:", len(request.body))
+                print("Content-Length header:", request.headers.get("content-length"))
 
-            status, content_type, response_body = route(
-                method, path, body
-            )
+                method = request.method
+                path = request.path
+                body = request.body
 
-            response = HTTPResponse(
-                status_code=status,
-                body=response_body,
-                headers={
-                    "Content-Type": content_type,
-                    "Connection": "close" if should_close else "keep-alive"
-                },
-            )
+                status, content_type, response_body = route(
+                    method, path, body
+                )
 
-            print("Sending response:", response.build()[:100])
-            client_socket.sendall(response.build())
+                response = HTTPResponse(
+                    status_code=status,
+                    body=response_body,
+                    headers={
+                        "Content-Type": content_type,
+                        "Connection": "close" if should_close else "keep-alive"
+                    },
+                )
 
-    finally:
-        client_socket.close()
+                print("Sending response:", response.build()[:100])
+                client_socket.sendall(response.build())
+
+        finally:
+            client_socket.close()
