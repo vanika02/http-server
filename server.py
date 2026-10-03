@@ -23,6 +23,9 @@ def _read_until_content_length(sock, buffer) -> bytes:
         chunk = sock.recv(4096)
 
         if not chunk:
+            if not buffer:
+                return None 
+
             raise ConnectionError(
                 "Socket closed while reading headers."
             )
@@ -82,35 +85,35 @@ while True:
                 buffer
             )
 
-        if not raw_request:
-            break
-        
-        request = HTTPRequest(raw_request)
+            if not raw_request:
+                break
+            
+            request = HTTPRequest(raw_request)
 
-        print("Method:", request.method)
-        print("Path:", request.path)
-        print("Expected body length:", request.headers.get("content-length"))
-        print("Actual parsed body length:", len(request.body))
-        print("Content-Length header:", request.headers.get("content-length"))
+            print("Method:", request.method)
+            print("Path:", request.path)
+            print("Expected body length:", request.headers.get("content-length"))
+            print("Actual parsed body length:", len(request.body))
+            print("Content-Length header:", request.headers.get("content-length"))
 
-        method = request.method
-        path = request.path
-        body = request.body
+            method = request.method
+            path = request.path
+            body = request.body
 
-        status, content_type, response_body = route(
-            method, path, body
-        )
+            status, content_type, response_body = route(
+                method, path, body
+            )
 
-        response = HTTPResponse(
-            status_code=status,
-            body=response_body,
-            headers={
-                "Content-Type": content_type,
-                "Connection": "close"
-            },
-        )
+            response = HTTPResponse(
+                status_code=status,
+                body=response_body,
+                headers={
+                    "Content-Type": content_type,
+                    "Connection": "keep-alive"
+                },
+            )
 
-        client_socket.sendall(response.build())
+            client_socket.sendall(response.build())
 
     finally:
         client_socket.close()
