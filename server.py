@@ -54,7 +54,7 @@ def _read_until_content_length(sock, buffer) -> bytes:
            )
         remaining.extend(chunk)
     
-    request_body = remaining[:content_length]
+    request_body = bytes(remaining[:content_length])
     leftover = remaining[content_length:]
 
     raw_request = (
