@@ -70,7 +70,7 @@ def _read_until_content_length(sock, buffer) -> bytes:
 
 def run_server(host=HOST, port=PORT):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((HOST, PORT))
+    server_socket.bind((host, port))
     server_socket.listen(1)
 
     print(f"server running on http://{HOST}:{PORT}")

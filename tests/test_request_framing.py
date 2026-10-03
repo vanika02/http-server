@@ -15,7 +15,7 @@ def test_reads_complete_request():
         b"Host: localhost\r\n"
         b"Content-Length: 13\r\n"
         b"\r\n"
-        b'{"name": "bob"}'
+        b'{"name":"bob"}'
     )
 
     sock = FakeSocket([request])
