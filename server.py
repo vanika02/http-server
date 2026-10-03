@@ -85,10 +85,17 @@ while True:
                 buffer
             )
 
-            if not raw_request is None:
+            if raw_request is None:
                 break
             
+
             request = HTTPRequest(raw_request)
+
+            connection = request.headers.get("connection", "").lower()
+            if request.http_version == "HTTP/1.1":
+                should_close = connection == "close"
+            else:
+                should_close = connection != "keep-alive"
 
             print("Method:", request.method)
             print("Path:", request.path)
@@ -109,10 +116,11 @@ while True:
                 body=response_body,
                 headers={
                     "Content-Type": content_type,
-                    "Connection": "close"
+                    "Connection": "close" if should_close else "keep-alive"
                 },
             )
 
+            print("Sending response:", response.build()[:100])
             client_socket.sendall(response.build())
 
     finally:
