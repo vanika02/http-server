@@ -126,6 +126,9 @@ def handle_client(client_socket):
             print("Sending response:", response.build()[:100])
             client_socket.sendall(response.build())
 
+            if should_close:
+                breask
+
     finally:
         client_socket.close()
 
