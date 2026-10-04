@@ -1,3 +1,5 @@
+import pytest
+
 from server import _read_until_content_length
 
 class FakeSocket:
