@@ -58,3 +58,41 @@ def test_request_split_across_multiple_recv_calls():
 
     assert raw_request == expected
     assert buffer == bytearray()
+
+def test_two_requests_in_one_recv():
+
+    request1 = (
+        b"GET / HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Connection: keep-alive\r\n"
+        b"\r\n"
+    )
+
+    request2 = (
+        b"GET /about HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Connection: close\r\n"
+        b"\r\n"
+    )
+
+    sock = FakeSocket([
+        request1 + request2
+    ])
+
+    buffer = bytearray()
+
+    raw_request1 = _read_until_content_length(
+        sock,
+        buffer 
+    )
+
+    assert raw_request1 == request1 
+    assert buffer == bytearray(request2)
+
+    raw_request2 = _read_until_content_length(
+        sock,
+        buffer 
+    )
+
+    assert raw_request2 == request2
+    assert buffer == bytearray()
