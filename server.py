@@ -10,7 +10,7 @@ PORT = 8080
 
 
 
-def _read_until_content_length(sock, buffer) -> bytes | None:
+def _read_one_request(sock, buffer) -> bytes | None:
 
     """Read and extract exactly one HTTP request."""
 
@@ -83,7 +83,7 @@ def handle_client(client_socket):
     
     try: 
         while True:
-            raw_request = _read_until_content_length(
+            raw_request = read_one_request(
                 client_socket,
                 buffer
             )
