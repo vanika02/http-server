@@ -126,13 +126,13 @@ def test_request_body_and_next_request():
         buffer
     )
 
-    assert raw_request1 = request1 
-    assert buffer = bytearray(request2)
+    assert raw_request1 == request1 
+    assert buffer == bytearray(request2)
 
     raw_request2 = _read_until_content_length(
         sock,
         buffer 
     )
 
-    assert raw_request2 = request2
-    assert buffer = bytearray()
+    assert raw_request2 == request2
+    assert buffer == bytearray()
