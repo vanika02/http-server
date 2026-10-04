@@ -2,3 +2,4 @@ project_101
 __pycache__
 venv
 test_client.py
+.pytest_cache
