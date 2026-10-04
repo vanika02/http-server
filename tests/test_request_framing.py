@@ -102,7 +102,7 @@ def test_request_body_and_next_request():
     request1 = (
         b"POST /signup HTTP/1.1\r\n"
         b"Host: localhost\r\n"
-        b"Content-Length: 13\r\n"
+        b"Content-Length: 14\r\n"
         b"Connection: keep-alive\r\n"
         b"\r\n"
         b'{"name":"bob"}'
