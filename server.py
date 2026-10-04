@@ -78,55 +78,56 @@ def run_server(host=HOST, port=PORT):
     while True:
         client_socket, client_address = server_socket.accept()
 
-        try: 
-            buffer = bytearray()
+def handle_client(client_socket):
+    buffer = bytearray()
+    
+    try: 
+        while True:
+            raw_request = _read_until_content_length(
+                client_socket,
+                buffer
+            )
 
-            while True:
-                raw_request = _read_until_content_length(
-                    client_socket,
-                    buffer
-                )
+            if raw_request is None:
+                break
+            
 
-                if raw_request is None:
-                    break
-                
+            request = HTTPRequest(raw_request)
 
-                request = HTTPRequest(raw_request)
+            connection = request.headers.get("connection", "").lower()
+            if request.http_version == "HTTP/1.1":
+                should_close = connection == "close"
+            else:
+                should_close = connection != "keep-alive"
 
-                connection = request.headers.get("connection", "").lower()
-                if request.http_version == "HTTP/1.1":
-                    should_close = connection == "close"
-                else:
-                    should_close = connection != "keep-alive"
+            print("Method:", request.method)
+            print("Path:", request.path)
+            print("Expected body length:", request.headers.get("content-length"))
+            print("Actual parsed body length:", len(request.body))
+            print("Content-Length header:", request.headers.get("content-length"))
 
-                print("Method:", request.method)
-                print("Path:", request.path)
-                print("Expected body length:", request.headers.get("content-length"))
-                print("Actual parsed body length:", len(request.body))
-                print("Content-Length header:", request.headers.get("content-length"))
+            method = request.method
+            path = request.path
+            body = request.body
 
-                method = request.method
-                path = request.path
-                body = request.body
+            status, content_type, response_body = route(
+                method, path, body
+            )
 
-                status, content_type, response_body = route(
-                    method, path, body
-                )
+            response = HTTPResponse(
+                status_code=status,
+                body=response_body,
+                headers={
+                    "Content-Type": content_type,
+                    "Connection": "close" if should_close else "keep-alive"
+                },
+            )
 
-                response = HTTPResponse(
-                    status_code=status,
-                    body=response_body,
-                    headers={
-                        "Content-Type": content_type,
-                        "Connection": "close" if should_close else "keep-alive"
-                    },
-                )
+            print("Sending response:", response.build()[:100])
+            client_socket.sendall(response.build())
 
-                print("Sending response:", response.build()[:100])
-                client_socket.sendall(response.build())
-
-        finally:
-            client_socket.close()
+    finally:
+        client_socket.close()
 
 if __name__ == "__main__":
     run_server()
