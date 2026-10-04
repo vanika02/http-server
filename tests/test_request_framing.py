@@ -138,3 +138,25 @@ def test_request_body_and_next_request():
 
     assert raw_request2 == request2
     assert buffer == bytearray()
+
+def test_incomplete_body_raises_error():
+
+    request_headers = (
+        b"POST /signup HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Content-Length: 10\r\n"
+        b"\r\n"
+    )
+
+    sock = FakeSocket([
+        request_headers + b"Hello",
+        b"",
+    ])
+
+    buffer = bytearray()
+
+    with pytest.raises(ConnectionError):
+        _read_until_content_length(
+            sock,
+            buffer
+        )
