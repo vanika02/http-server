@@ -127,7 +127,7 @@ def handle_client(client_socket):
             client_socket.sendall(response.build())
 
             if should_close:
-                breask
+                break
 
     finally:
         client_socket.close()
