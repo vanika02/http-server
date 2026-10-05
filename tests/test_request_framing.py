@@ -160,3 +160,21 @@ def test_incomplete_body_raises_error():
             sock,
             buffer
         )
+
+def test_invalid_content_length_raises_error():
+
+    request = (
+        b"POST /signup HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Content-Length: abc\r\n"
+        b"\r\n"
+    )
+
+    sock = FakeSocket([request])
+    buffer = bytearray()
+
+    with pytest.raises(ValueError):
+        _read_one_request(
+            sock,
+            buffer
+        )
