@@ -83,7 +83,7 @@ def test_two_requests_in_one_recv():
 
     buffer = bytearray()
 
-    raw_request1 = _read_until_content_length(
+    raw_request1 = _read_one_request(
         sock,
         buffer 
     )
@@ -91,7 +91,7 @@ def test_two_requests_in_one_recv():
     assert raw_request1 == request1 
     assert buffer == bytearray(request2)
 
-    raw_request2 = _read_until_content_length(
+    raw_request2 = _read_one_request(
         sock,
         buffer 
     )
@@ -123,7 +123,7 @@ def test_request_body_and_next_request():
 
     buffer = bytearray()
 
-    raw_request1 = _read_until_content_length(
+    raw_request1 = _read_one_request(
         sock,
         buffer
     )
@@ -131,7 +131,7 @@ def test_request_body_and_next_request():
     assert raw_request1 == request1 
     assert buffer == bytearray(request2)
 
-    raw_request2 = _read_until_content_length(
+    raw_request2 = _read_one_request(
         sock,
         buffer 
     )
@@ -156,7 +156,7 @@ def test_incomplete_body_raises_error():
     buffer = bytearray()
 
     with pytest.raises(ConnectionError):
-        _read_until_content_length(
+        _read_one_request(
             sock,
             buffer
         )
