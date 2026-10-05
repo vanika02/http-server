@@ -43,6 +43,12 @@ def _read_one_request(sock, buffer) -> bytes | None:
             content_length = int(
                 line.split(":", 1)[1].strip()
             )
+
+            if content_length < 0:
+                raise ValueError(
+                    "Content-Length cannot be negative"
+                )
+                
             break
     
     while len(remaining) < content_length:
