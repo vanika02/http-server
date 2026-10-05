@@ -1,6 +1,7 @@
 import pytest
 
 from server import _read_one_request
+from execptions import HTTPParseError
 
 class FakeSocket:
 
@@ -155,7 +156,7 @@ def test_incomplete_body_raises_error():
 
     buffer = bytearray()
 
-    with pytest.raises(ConnectionError):
+    with pytest.raises(HTTPParseError):
         _read_one_request(
             sock,
             buffer
@@ -173,7 +174,7 @@ def test_invalid_content_length_raises_error():
     sock = FakeSocket([request])
     buffer = bytearray()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(HTTPParseError):
         _read_one_request(
             sock,
             buffer
@@ -191,7 +192,7 @@ def test_negative_content_length_raises_error():
     sock = FakeSocket([request])
     buffer = bytearray()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(HTTPParseError):
         _read_one_request(
             sock,
             buffer
@@ -209,7 +210,7 @@ def test_empty_content_length_raises_error():
     sock = FakeSocket([request])
     buffer = bytearray()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(HTTPParseError):
         _read_one_request(
             sock,
             buffer
