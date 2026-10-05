@@ -196,3 +196,21 @@ def test_negative_content_length_raises_error():
             sock,
             buffer
         )
+
+def test_empty_content_length_raises_error():
+
+    request = (
+        b"POST /HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Content-Length:\r\n"
+        b"\r\n"
+    )
+
+    sock = FakeSocket([request])
+    buffer = bytearray()
+
+    with pytest.raises(ValueError)
+    _read_one_request(
+        sock,
+        buffer
+    )
