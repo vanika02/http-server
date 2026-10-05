@@ -23,7 +23,7 @@ def test_reads_complete_request():
     sock = FakeSocket([request])
     buffer = bytearray()
 
-    raw_request = _read_until_content_length(
+    raw_request = _read_one_request(
         sock,
         buffer
     )
