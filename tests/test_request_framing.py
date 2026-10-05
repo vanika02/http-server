@@ -209,8 +209,8 @@ def test_empty_content_length_raises_error():
     sock = FakeSocket([request])
     buffer = bytearray()
 
-    with pytest.raises(ValueError)
-    _read_one_request(
-        sock,
-        buffer
-    )
+    with pytest.raises(ValueError):
+        _read_one_request(
+            sock,
+            buffer
+        )
