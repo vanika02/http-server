@@ -4,6 +4,7 @@ from router import route
 from request_parser import HTTPRequest
 from http_response import HTTPResponse
 
+from execptions import HTTPParseError
 
 HOST = '127.0.0.1'
 PORT = 8080
