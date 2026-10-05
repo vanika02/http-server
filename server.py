@@ -83,7 +83,7 @@ def handle_client(client_socket):
     
     try: 
         while True:
-            raw_request = read_one_request(
+            raw_request = _read_one_request(
                 client_socket,
                 buffer
             )
