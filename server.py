@@ -135,6 +135,17 @@ def handle_client(client_socket):
                 },
             )
 
+    
+    except HTTPParseError:
+        response = HTTPResponse(
+            status_code=400,
+            body="Bad Request",
+            headers={
+                "Content-Type": "text/plain",
+                "Connection": "close"
+            },
+        )
+        
             print("Sending response:", response.build()[:100])
             client_socket.sendall(response.build())
 
