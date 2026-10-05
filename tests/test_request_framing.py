@@ -53,7 +53,7 @@ def test_request_split_across_multiple_recv_calls():
 
     buffer = bytearray()
 
-    raw_request = _read_until_content_length(
+    raw_request = _read_one_request(
         sock,
         buffer
     )
