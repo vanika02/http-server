@@ -43,6 +43,13 @@ def _read_one_request(sock, buffer) -> bytes | None:
         if line.lower().startswith("content-length:"):
             content_length = int(
                 line.split(":", 1)[1].strip()
+
+                try:
+                    content_length = int(value)
+                except ValueError as exc:
+                    raise HTTPParseError(
+                        "Invalid Content-Length"
+                    ) from exc
             )
 
             if content_length < 0:
