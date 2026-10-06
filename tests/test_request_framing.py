@@ -156,7 +156,7 @@ def test_incomplete_body_raises_error():
 
     buffer = bytearray()
 
-    with pytest.raises(HTTPParseError):
+    with pytest.raises(ConnectionError):
         _read_one_request(
             sock,
             buffer
