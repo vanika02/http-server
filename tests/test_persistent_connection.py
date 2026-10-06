@@ -54,7 +54,7 @@ def test_malformed_request_returns_400():
 
     server_socket, client_socket = socket.socketpair()
 
-    server_thread = threading.Tread(
+    server_thread = threading.Thread(
         target=handle_client,
         args=(server_socket,)
     )
