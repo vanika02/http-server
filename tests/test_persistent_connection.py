@@ -49,3 +49,35 @@ def test_two_requests_on_same_connection():
     server_thread.join(timeout=1)
 
     assert not server_thread.is_alive()
+
+def test_malformed_request_returns_400():
+
+    server_socket, client_socket = sock.socketpair()
+
+    server_thread = threading.Tread(
+        target=handle_client,
+        args=(server_socket,)
+    )
+
+    server_thread.start()
+
+    request = (
+        b"POST /signup HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Content-Length: abc\r\n"
+        b"\r\n"
+    )
+
+    client_socket.sendall(request)
+
+    response = client_socket.recv(4096)
+
+    assert b"HTTP/1.1 400 Bad Request" in response
+    assert b"Connection: close" in response
+    assert b"Bad Request" in response
+
+    client_socket.close()
+
+    server_thread.join(timeout=1)
+
+    assert not server_thread.is_alive()
