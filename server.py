@@ -28,7 +28,7 @@ def _read_one_request(sock, buffer) -> bytes | None:
     
     header_bytes, remaining = buffer.split(
         b"\r\n\r\n",
-         1
+        1
     )
 
     remaining = bytearray(remaining)
@@ -79,6 +79,7 @@ def _read_one_request(sock, buffer) -> bytes | None:
     return raw_request
 
 def run_server(host=HOST, port=PORT):
+
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
     server_socket.listen(1)
@@ -89,18 +90,38 @@ def run_server(host=HOST, port=PORT):
         client_socket, client_address = server_socket.accept()
 
 def handle_client(client_socket):
+
     buffer = bytearray()
     
     try: 
         while True:
-            raw_request = _read_one_request(
-                client_socket,
-                buffer
-            )
 
-            if raw_request is None:
+            try:
+
+                raw_request = _read_one_request(
+                    client_socket,
+                    buffer
+                )
+
+            except HTTPParseError:
+                
+                response = HTTPResponse(
+                    status_code=400,
+                    body="Bad Request",
+                    headers={
+                        "Content-Type": "test/plain",
+                        "Connection": "close"
+                    },
+                )
+
+                client_socket.sendall(
+                    response.build()
+                )
+
                 break
             
+            if raw_request is None:
+                break
 
             request = HTTPRequest(raw_request)
 
