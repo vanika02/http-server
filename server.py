@@ -3,12 +3,10 @@ import socket
 from router import route
 from request_parser import HTTPRequest
 from http_response import HTTPResponse
-
 from execptions import HTTPParseError
 
 HOST = '127.0.0.1'
 PORT = 8080
-
 
 
 def _read_one_request(sock, buffer) -> bytes | None:
@@ -43,12 +41,12 @@ def _read_one_request(sock, buffer) -> bytes | None:
         if line.lower().startswith("content-length:"):
             value = line.split(":", 1)[1].strip()
 
-                try:
-                    content_length = int(value)
-                except ValueError as exc:
-                    raise HTTPParseError(
-                        "Invalid Content-Length"
-                    ) from exc
+            try:
+                content_length = int(value)
+            except ValueError as exc:
+                raise HTTPParseError(
+                    "Invalid Content-Length"
+                ) from exc
 
             if content_length < 0:
                 raise HTTPParseError(
