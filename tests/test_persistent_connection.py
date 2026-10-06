@@ -52,7 +52,7 @@ def test_two_requests_on_same_connection():
 
 def test_malformed_request_returns_400():
 
-    server_socket, client_socket = sock.socketpair()
+    server_socket, client_socket = socket.socketpair()
 
     server_thread = threading.Tread(
         target=handle_client,
