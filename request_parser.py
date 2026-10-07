@@ -54,6 +54,9 @@ class HTTPRequest:
             raise ValueError("Malformed HTTP request line")
         
         # parse the headers 
+
+        content_length = []
+
         for line in header_lines[1:]:
             if b":" not in line:
                 raise HTTPParseError(
@@ -65,6 +68,21 @@ class HTTPRequest:
                 key.strip().decode().lower()
             ] = value.strip().decode()
 
+            self.headers[key] = value
+
+            if key == "content-length":
+                try:
+                    content_length.append(int(value))
+                except ValueError as exc:
+                    raise HTTPParseError(
+                        "Invalid Content-Length"
+                    ) from exc 
+
+        if len(content_length) > 1:
+            raise HTTPParseError(
+                "Duplicate Content-Length"
+            )
+            
     def __repr__(self):
         return (
             f"HTTPRequest("
