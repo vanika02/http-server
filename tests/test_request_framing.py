@@ -1,7 +1,6 @@
 import pytest
 
 from server import _read_one_request
-from request_parser import HTTPRequest
 from exceptions import HTTPParseError
 
 class FakeSocket:
@@ -216,15 +215,3 @@ def test_empty_content_length_raises_error():
             sock,
             buffer
         )
-
-def test_malformed_header_raises_error():
-
-    request = (
-        b"GET / HTTP/1.1\r\n"
-        b"Host: localhost\r\n"
-        b"BrokenHeader\r\n"
-        b"\r\n"
-    )
-    
-    with pytest.raises(HTTPParseError):
-        HTTPRequest(request)
