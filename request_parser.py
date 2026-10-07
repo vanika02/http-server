@@ -1,3 +1,5 @@
+from exceptions import HTTPParseError
+
 class HTTPRequest:
     """
     A class representing an HTTP request.
@@ -57,7 +59,7 @@ class HTTPRequest:
                 raise HTTPParseError(
                     "Malformed Header"
                 )
-                
+
             key, value = line.split(b":", 1)
             self.headers[
                 key.strip().decode().lower()
