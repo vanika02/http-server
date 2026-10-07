@@ -26,7 +26,7 @@ def test_duplicate_content_length_raises_error():
         b"Content-Length: 5\r\n"
         b"Content-Length: 5\r\n"
         b"\r\n"
-        b"hell"
+        b"hello"
     )
 
     with pytest.raises(HTTPParseError):
