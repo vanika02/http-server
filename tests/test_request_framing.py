@@ -1,6 +1,7 @@
 import pytest
 
 from server import _read_one_request
+from request_parser import HTTPRequest
 from exceptions import HTTPParseError
 
 class FakeSocket:
