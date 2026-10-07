@@ -64,9 +64,9 @@ class HTTPRequest:
                 )
 
             key, value = line.split(b":", 1)
-            self.headers[
-                key.strip().decode().lower()
-            ] = value.strip().decode()
+            
+            key = key.strip().decode().lower()
+            value = value.strip().decode()
 
             self.headers[key] = value
 
@@ -82,7 +82,7 @@ class HTTPRequest:
             raise HTTPParseError(
                 "Duplicate Content-Length"
             )
-            
+
     def __repr__(self):
         return (
             f"HTTPRequest("
