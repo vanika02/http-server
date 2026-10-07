@@ -54,7 +54,10 @@ class HTTPRequest:
         # parse the headers 
         for line in header_lines[1:]:
             if b":" not in line:
-                continue
+                raise HTTPParseError(
+                    "Malformed Header"
+                )
+                
             key, value = line.split(b":", 1)
             self.headers[
                 key.strip().decode().lower()
