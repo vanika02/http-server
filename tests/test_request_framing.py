@@ -225,12 +225,6 @@ def test_malformed_header_raises_error():
         b"BrokenHeader\r\n"
         b"\r\n"
     )
-
-    sock = FakeSocket([request])
-    buffer = bytearray()
-
+    
     with pytest.raises(HTTPParseError):
-        _read_one_request(
-            sock,
-            buffer
-        )
+        HTTPRequest(request)
