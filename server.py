@@ -102,9 +102,11 @@ def handle_client(client_socket):
                     client_socket,
                     buffer
                 )
+                
+                if raw_request is None:
+                    break
 
             except HTTPParseError:
-                
                 response = HTTPResponse(
                     status_code=400,
                     body="Bad Request",
@@ -118,9 +120,6 @@ def handle_client(client_socket):
                     response.build()
                 )
 
-                break
-            
-            if raw_request is None:
                 break
 
             request = HTTPRequest(raw_request)
