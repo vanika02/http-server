@@ -215,3 +215,21 @@ def test_empty_content_length_raises_error():
             sock,
             buffer
         )
+
+def test_malformed_header_raises_error():
+
+    request = (
+        b"GET /HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"BrokenHeader\r\n"
+        b"\r\n"
+    )
+
+    sock = FakeSocket([request])
+    buffer = bytearray()
+
+    with pytest.raises(HTTPParseError):
+        _read_one_request(
+            sock,
+            buffer
+        )
