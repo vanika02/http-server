@@ -33,60 +33,6 @@ class HTTPRequest:
         self.headers = headers
         self.body = body
 
-    def _parse_request(self):
-        """Parse the raw HTTP request into its components."""
-
-        # split the request into headers and body
-        parts = self.raw_request.split(b"\r\n\r\n", 1)
-        headers_section = parts[0]
-        self.body = parts[1] if len(parts) > 1 else b""
-
-        # split headers into lines
-        header_lines = headers_section.split(b"\r\n")
-        if not header_lines:
-            return 
-
-        # parse the request line (first line)
-        request_line = header_lines[0].split()
-
-        if len(request_line) >= 3:
-            self.method = request_line[0].decode()
-            self.path = request_line[1].decode()
-            self.http_version = request_line[2].decode()
-        
-        else:
-            raise ValueError("Malformed HTTP request line")
-        
-        # parse the headers 
-
-        content_length = []
-
-        for line in header_lines[1:]:
-            if b":" not in line:
-                raise HTTPParseError(
-                    "Malformed Header"
-                )
-
-            key, value = line.split(b":", 1)
-            
-            key = key.strip().decode().lower()
-            value = value.strip().decode()
-
-            self.headers[key] = value
-
-            if key == "content-length":
-                try:
-                    content_length.append(int(value))
-                except ValueError as exc:
-                    raise HTTPParseError(
-                        "Invalid Content-Length"
-                    ) from exc 
-
-        if len(content_length) > 1:
-            raise HTTPParseError(
-                "Duplicate Content-Length"
-            )
-
     def __repr__(self):
         return (
             f"HTTPRequest("
