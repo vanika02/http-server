@@ -1,7 +1,7 @@
 import socket
 
 from router import route
-from request_parser import HTTPRequest
+from request_parser import HTTPRequest, parse_request_head
 from http_response import HTTPResponse
 from exceptions import HTTPParseError
 
