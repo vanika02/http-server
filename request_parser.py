@@ -2,11 +2,11 @@ from exceptions import HTTPParseError
 
 class HTTPRequest:
     """
-    A class representing an HTTP request.
+    A Parsed HTTP request.
 
     Attributes:
         headers (dict): Dictionary of HTTP headers.
-        body (bytes): Request body.
+        body (bytes): Raw Request body. Empty of request is None.
         method (str): HTTP method (GET, POST, etc.)
         path (str): Requested path
         http_version (str): HTTP version
@@ -24,7 +24,11 @@ class HTTPRequest:
         Initialize an HTTPRequest object.
 
         Args: 
-            raw_request (bytes): Raw HTTP request string.
+            method (str): HTTP method.
+            path (str): Requested path.
+            http_version (str): HTTP version string.
+            headers (dict[str, str]): Parsed headers with lowercase keys.
+            body (bytes): Raw request body.
         """
 
         self.method = method
