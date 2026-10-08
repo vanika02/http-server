@@ -27,6 +27,12 @@ class HTTPRequest:
             raw_request (bytes): Raw HTTP request string.
         """
 
+        self.method = method
+        self.path = path
+        self.http_version = http_version
+        self.headers = headers
+        self.body = body
+
     def _parse_request(self):
         """Parse the raw HTTP request into its components."""
 
