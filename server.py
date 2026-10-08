@@ -62,7 +62,14 @@ def _read_one_request(sock, buffer) -> bytes | None:
     buffer.clear()
     buffer.extend(leftover)
 
-    return raw_request
+    return (
+        raw_request,
+        method,
+        path,
+        http_version,
+        headers,
+        request_body
+    )
 
 def run_server(host=HOST, port=PORT):
 
