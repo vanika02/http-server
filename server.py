@@ -32,28 +32,14 @@ def _read_one_request(sock, buffer) -> bytes | None:
     )
 
     remaining = bytearray(remaining)
-
-    header_text = header_bytes.decode()
-
-    content_length = 0
-
-    for line in header_text.split("\r\n"):
-        if line.lower().startswith("content-length:"):
-            value = line.split(":", 1)[1].strip()
-
-            try:
-                content_length = int(value)
-            except ValueError as exc:
-                raise HTTPParseError(
-                    "Invalid Content-Length"
-                ) from exc
-
-            if content_length < 0:
-                raise HTTPParseError(
-                    "Content-Length cannot be negative"
-                )
-                
-            break
+    
+    (
+        method,
+        path,
+        http_version,
+        headers,
+        content_length,
+    ) = parse_request_head(header_bytes)
     
     while len(remaining) < content_length:
         chunk = sock.recv(4096)
