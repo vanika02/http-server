@@ -12,22 +12,20 @@ class HTTPRequest:
         http_version (str): HTTP version
     """
 
-    def __init__(self, raw_request: bytes):
+    def __init__(
+        self,
+        method: str,
+        path: str,
+        http_version: str,
+        headers: dict[str, str]
+        body: bytes,
+    ):
         """
         Initialize an HTTPRequest object.
 
         Args: 
             raw_request (bytes): Raw HTTP request string.
         """
-
-        self.raw_request = raw_request
-        self.headers: dict[str, str] = {}
-        self.body: bytes = b""
-        self.method = ""
-        self.path = ""
-        self.http_version = ""
-
-        self._parse_request()
 
     def _parse_request(self):
         """Parse the raw HTTP request into its components."""
