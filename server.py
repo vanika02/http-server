@@ -81,6 +81,7 @@ def run_server(host=HOST, port=PORT):
 
     while True:
         client_socket, client_address = server_socket.accept()
+        handle_client(client_socket)
 
 def handle_client(client_socket):
 
@@ -99,6 +100,16 @@ def handle_client(client_socket):
                 if raw_request is None:
                     break
 
+                (
+                    raw_request,
+                    method,
+                    path,
+                    http_version,
+                    headers,
+                    body
+                ) = result
+
+                
             except HTTPParseError:
                 response = HTTPResponse(
                     status_code=400,
@@ -115,7 +126,13 @@ def handle_client(client_socket):
 
                 break
 
-            request = HTTPRequest(raw_request)
+            request = HTTPRequest(
+                method=method,
+                path=path,
+                http_version=http_version,
+                headers=headers,
+                body=bedy
+            )
 
             connection = request.headers.get("connection", "").lower()
             
