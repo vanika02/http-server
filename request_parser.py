@@ -34,6 +34,7 @@ class HTTPRequest:
         self.body = body
 
     def __repr__(self):
+        """Return a short summary (body omitted to keep logs readable)."""
         return (
             f"HTTPRequest("
             f"method={self.method}, "
