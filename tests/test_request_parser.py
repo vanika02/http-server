@@ -1,7 +1,7 @@
 import pytest
 
 from exceptions import HTTPParseError
-from request_parser import HTTPRequest
+from request_parser import parse_request_head
 
 
 def test_malformed_header_raises_error():
@@ -13,7 +13,7 @@ def test_malformed_header_raises_error():
     )
     
     with pytest.raises(HTTPParseError):
-        HTTPRequest(request)
+        parse_request_head(request)
 
 
 
@@ -27,4 +27,4 @@ def test_duplicate_content_length_raises_error():
     )
 
     with pytest.raises(HTTPParseError):
-        HTTPRequest(request)
+        parse_request_head(request)
