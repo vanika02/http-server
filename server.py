@@ -132,7 +132,7 @@ def handle_client(client_socket):
                 path=path,
                 http_version=http_version,
                 headers=headers,
-                body=bedy
+                body=body
             )
 
             connection = request.headers.get("connection", "").lower()
