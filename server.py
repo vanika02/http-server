@@ -48,6 +48,7 @@ def _read_one_request(sock, buffer) -> bytes | None:
            raise ConnectionError(
             "Socket closed before complete request body."
            )
+           
         remaining.extend(chunk)
     
     request_body = bytes(remaining[:content_length])

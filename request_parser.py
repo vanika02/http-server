@@ -17,7 +17,7 @@ class HTTPRequest:
         method: str,
         path: str,
         http_version: str,
-        headers: dict[str, str]
+        headers: dict[str, str],
         body: bytes,
     ):
         """
