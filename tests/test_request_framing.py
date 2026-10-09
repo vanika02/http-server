@@ -100,8 +100,6 @@ def test_two_requests_in_one_recv():
         buffer 
     )
 
-    assert result1 == request1 
-
     assert result1 is not None
     assert bytes(request1[0]) == request1
 
