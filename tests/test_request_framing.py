@@ -111,7 +111,7 @@ def test_two_requests_in_one_recv():
     )
 
     assert result2 is not None 
-    assert bytes(result2[0]) = request2
+    assert bytes(result2[0]) == request2
 
 def test_request_body_and_next_request():
 
