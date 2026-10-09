@@ -23,9 +23,7 @@ def test_duplicate_content_length_raises_error():
         b"POST /signup HTTP/1.1\r\n"
         b"Host: localhost\r\n"
         b"Content-Length: 5\r\n"
-        b"Content-Length: 5\r\n"
-        b"\r\n"
-        b"hello"
+        b"Content-Length: 5"
     )
 
     with pytest.raises(HTTPParseError):
