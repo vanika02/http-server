@@ -48,7 +48,7 @@ def _read_one_request(sock, buffer) -> bytes | None:
            raise ConnectionError(
             "Socket closed before complete request body."
            )
-           
+
         remaining.extend(chunk)
     
     request_body = bytes(remaining[:content_length])
@@ -93,12 +93,12 @@ def handle_client(client_socket):
 
             try:
 
-                raw_request = _read_one_request(
+                result = _read_one_request(
                     client_socket,
                     buffer
                 )
                 
-                if raw_request is None:
+                if result is None:
                     break
 
                 (
