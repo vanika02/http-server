@@ -95,7 +95,7 @@ def test_two_requests_in_one_recv():
 
     buffer = bytearray()
 
-    raw_request1 = _read_one_request(
+    result1 = _read_one_request(
         sock,
         buffer 
     )
