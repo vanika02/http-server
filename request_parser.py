@@ -62,6 +62,7 @@ def parse_request_head(header_bytes: bytes):
         )
     
     try:
+        key = key.strip().decode().lower()
         method = request_line[0].decode()
         path = request_line[1].decode()
         http_version = request_line[2].decode()
@@ -69,6 +70,9 @@ def parse_request_head(header_bytes: bytes):
         raise HTTPParseError(
             "Invalid request encoding"
         ) from exc 
+    
+
+    headers[key] = value 
     
     headers = {}
     content_lengths = []

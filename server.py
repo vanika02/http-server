@@ -136,6 +136,10 @@ def handle_client(client_socket):
             )
 
             connection = request.headers.get("connection", "").lower()
+
+            print("DEBUG headers:", repr(request.headers))
+            print("DEBUG version:", repr(request.http_version))
+            print("DEBUG connection:", repr(connection))
             
             if request.http_version == "HTTP/1.1":
                 should_close = connection == "close"
