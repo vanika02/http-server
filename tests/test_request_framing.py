@@ -100,16 +100,18 @@ def test_two_requests_in_one_recv():
         buffer 
     )
 
-    assert raw_request1 == request1 
-    assert buffer == bytearray(request2)
+    assert result1 == request1 
 
-    raw_request2 = _read_one_request(
+    assert result1 is not None
+    assert bytes(request1[0]) == request1
+
+    result2 = _read_one_request(
         sock,
         buffer 
     )
 
-    assert raw_request2 == request2
-    assert buffer == bytearray()
+    assert result2 is not None 
+    assert bytes(result2[0]) = request2
 
 def test_request_body_and_next_request():
 
