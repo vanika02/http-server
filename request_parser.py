@@ -75,7 +75,7 @@ def parse_request_head(header_bytes: bytes):
 
     for line in header_lines[1:]:
 
-        if b":" not in lines:
+        if b":" not in line:
             raise HTTPParseError(
                 "Malformed header"
             )
