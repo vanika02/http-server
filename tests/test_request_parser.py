@@ -9,8 +9,7 @@ def test_malformed_header_raises_error():
     request = (
         b"GET / HTTP/1.1\r\n"
         b"Host: localhost\r\n"
-        b"BrokenHeader\r\n"
-        b"\r\n"
+        b"BrokenHeader"
     )
     
     with pytest.raises(HTTPParseError):
