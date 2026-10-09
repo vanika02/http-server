@@ -116,7 +116,7 @@ def handle_client(client_socket):
                     status_code=400,
                     body="Bad Request",
                     headers={
-                        "Content-Type": "test/plain",
+                        "Content-Type": "text/plain",
                         "Connection": "close"
                     },
                 )
