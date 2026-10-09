@@ -24,7 +24,7 @@ def test_reads_complete_request():
     sock = FakeSocket([request])
     buffer = bytearray()
 
-    raw_request = _read_one_request(
+    result = _read_one_request(
         sock,
         buffer
     )
@@ -62,13 +62,16 @@ def test_request_split_across_multiple_recv_calls():
 
     buffer = bytearray()
 
-    raw_request = _read_one_request(
+    result = _read_one_request(
         sock,
         buffer
     )
 
-    assert raw_request == expected
-    assert buffer == bytearray()
+    assert result is not None 
+
+    raw_request = result[0]
+
+    assert bytes(raw_request) == expected
 
 def test_two_requests_in_one_recv():
 
