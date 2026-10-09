@@ -29,8 +29,16 @@ def test_reads_complete_request():
         buffer
     )
 
-    assert raw_request == request
-    assert buffer == bytearray()
+    assert result is not None 
+
+    raw_request, method, path, http_version, headers, body = result
+
+    assert bytes(raw_request) == request
+    assert method == "POST"
+    assert path == "/signup"
+    assert http_version == "HTTP/1.1"
+    assert headers["content-length"] == "14"
+    assert body == b'{"name":"bob"}'
 
 
 def test_request_split_across_multiple_recv_calls():
