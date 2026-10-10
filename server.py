@@ -14,6 +14,7 @@ def _read_one_request(sock, buffer):
     """Read and extract exactly one HTTP request."""
 
     MAX_HEADER_SIZE = 16 * 1024
+    HEADER_DELIMETER = b"\r\n\r\n"
     
     while b"\r\n\r\n" not in buffer:
         chunk = sock.recv(4096)
