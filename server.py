@@ -7,7 +7,7 @@ from exceptions import HTTPParseError
 
 HOST = '127.0.0.1'
 PORT = 8080
-
+MAX_BODY_SIZE = 1 * 1024 * 1024 # 1MiB
 
 def _read_one_request(sock, buffer):
 
