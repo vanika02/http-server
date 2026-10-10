@@ -101,7 +101,7 @@ def test_two_requests_in_one_recv():
     )
 
     assert result1 is not None
-    assert bytes(request1[0]) == request1
+    assert bytes(result1[0]) == request1
 
     result2 = _read_one_request(
         sock,
