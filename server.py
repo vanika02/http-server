@@ -16,64 +16,75 @@ def _read_one_request(sock, buffer):
     MAX_HEADER_SIZE = 16 * 1024
     HEADER_DELIMETER = b"\r\n\r\n"
     
-    while b"\r\n\r\n" not in buffer:
-        chunk = sock.recv(4096)
+    while True:
+        header_end = buffer.find(HEADER_DELIMETER)
 
-        if not chunk:
-            if not buffer:
-                return None 
+        if header_end != -1:
+            # the delimiter marks the end of the header block
+            if header_end > MAX_HEADER_SIZE:
+                raise HTTPParseError("Request headers are too large")
 
+            header_bytes = bytes(buffer[:header_end])
+            remaining = bytearray(buffer[header_end + len(HEADER_DELIMETER):])
+            break 
+
+            chunk = sock.recv(4096)
+
+            if not chunk:
+                if not buffer:
+                    return None 
+
+                raise ConnectionError(
+                    "Socket closed while reading headers."
+                )
+
+            buffer.extend(chunk)
+    
+        header_bytes, remaining = buffer.split(
+            b"\r\n\r\n",
+            1
+        )
+
+        remaining = bytearray(remaining)
+        
+        (
+            method,
+            path,
+            http_version,
+            headers,
+            content_length,
+        ) = parse_request_head(header_bytes)
+        
+        while len(remaining) < content_length:
+            chunk = sock.recv(4096)
+
+            if not chunk:
             raise ConnectionError(
-                "Socket closed while reading headers."
+                "Socket closed before complete request body."
             )
 
-        buffer.extend(chunk)
-    
-    header_bytes, remaining = buffer.split(
-        b"\r\n\r\n",
-        1
-    )
+            remaining.extend(chunk)
+        
+        request_body = bytes(remaining[:content_length])
+        leftover = remaining[content_length:]
 
-    remaining = bytearray(remaining)
-    
-    (
-        method,
-        path,
-        http_version,
-        headers,
-        content_length,
-    ) = parse_request_head(header_bytes)
-    
-    while len(remaining) < content_length:
-        chunk = sock.recv(4096)
+        raw_request = (
+            header_bytes
+            + b"\r\n\r\n"
+            + request_body
+        )
 
-        if not chunk:
-           raise ConnectionError(
-            "Socket closed before complete request body."
-           )
+        buffer.clear()
+        buffer.extend(leftover)
 
-        remaining.extend(chunk)
-    
-    request_body = bytes(remaining[:content_length])
-    leftover = remaining[content_length:]
-
-    raw_request = (
-        header_bytes
-        + b"\r\n\r\n"
-        + request_body
-    )
-
-    buffer.clear()
-    buffer.extend(leftover)
-
-    return (
-        raw_request,
-        method,
-        path,
-        http_version,
-        headers,
-        request_body
-    )
+        return (
+            raw_request,
+            method,
+            path,
+            http_version,
+            headers,
+            request_body
+        )
 
 def run_server(host=HOST, port=PORT):
 
