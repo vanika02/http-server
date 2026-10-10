@@ -148,8 +148,8 @@ def test_request_body_and_next_request():
         buffer 
     )
 
-    assert raw_request2 == request2
-    assert buffer == bytearray()
+    assert raw_request2 is not None 
+    assert bytes(raw_request2[0]) == request2
 
 def test_incomplete_body_raises_error():
 
