@@ -54,6 +54,11 @@ def _read_one_request(sock, buffer):
             headers,
             content_length,
         ) = parse_request_head(header_bytes)
+
+        if content_length > MAX_BODY_SIZE:
+            raise HTTPParseError(
+                "Request body is too large"
+            )
         
         while len(remaining) < content_length:
             chunk = sock.recv(4096)
