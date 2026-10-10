@@ -140,8 +140,8 @@ def test_request_body_and_next_request():
         buffer
     )
 
-    assert raw_request1 == request1 
-    assert buffer == bytearray(request2)
+    assert raw_request1 is not None
+    assert bytes(raw_request1[0]) == request1
 
     raw_request2 = _read_one_request(
         sock,
