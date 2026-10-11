@@ -229,15 +229,12 @@ def test_empty_content_length_raises_error():
 
 def test_header_size_above_max_length_raises_error():
 
-    MAX_HEADER_SIZE = 16 * 1024
-
-    request = (
-        b"POST /signup HTTP/1.1\r\n"
-        b"Host: localhost\r\n"
-        b"Content-Length: 2000000"
+    oversized_header = (
+        b"GET / HTTP/1.1\r\n"
+        + b"X-Test: " + b"a" * (16 * 1024)
     )
-    
-    sock = FakeSocket([request])
+
+    sock = FakeSocket([oversized_header])
     buffer = bytearray()
 
 
