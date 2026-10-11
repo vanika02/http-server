@@ -243,3 +243,21 @@ def test_header_size_above_max_length_raises_error():
             sock,
             buffer
         )
+
+def test_content_length_above_max_size_raises_error():
+
+    request = (
+        b"POST /signup HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Content-Length: 2000000\r\n"
+        b"\r\n"
+    )
+
+    sock = FakeSocket([request])
+    buffer = bytearray()
+
+    with pytest.raise(HTTPParseError):
+        _read_one_request(
+            sock,
+            buffer
+        )
