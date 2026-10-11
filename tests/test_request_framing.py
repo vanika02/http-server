@@ -232,7 +232,7 @@ def test_header_size_above_max_length_raises_error():
     MAX_HEADER_SIZE = 16 * 1024
 
     request = (
-        b"POST/ signup HTTP/1.1\r\n"
+        b"POST /signup HTTP/1.1\r\n"
         b"Host: localhost\r\n"
         b"Content-Length: 2000000"
     )
