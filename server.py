@@ -64,9 +64,9 @@ def _read_one_request(sock, buffer):
             chunk = sock.recv(4096)
 
             if not chunk:
-            raise ConnectionError(
-                "Socket closed before complete request body."
-            )
+                raise ConnectionError(
+                    "Socket closed before complete request body."
+                )
 
             remaining.extend(chunk)
         
