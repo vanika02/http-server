@@ -256,7 +256,7 @@ def test_content_length_above_max_size_raises_error():
     sock = FakeSocket([request])
     buffer = bytearray()
 
-    with pytest.raise(HTTPParseError):
+    with pytest.raises(HTTPParseError):
         _read_one_request(
             sock,
             buffer
