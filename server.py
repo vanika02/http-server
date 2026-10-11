@@ -28,6 +28,11 @@ def _read_one_request(sock, buffer):
             remaining = bytearray(buffer[header_end + len(HEADER_DELIMETER):])
             break 
 
+            if len(buffer) > MAX_HEADER_SIZE:
+                raise HTTPParseError(
+                    "Request headers are too large"
+                )
+
             chunk = sock.recv(4096)
 
             if not chunk:
