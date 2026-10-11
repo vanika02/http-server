@@ -7,12 +7,12 @@ from exceptions import HTTPParseError
 
 HOST = '127.0.0.1'
 PORT = 8080
-MAX_BODY_SIZE = 1 * 1024 * 1024 # 1MiB
 
 def _read_one_request(sock, buffer):
 
     """Read and extract exactly one HTTP request."""
 
+    MAX_BODY_SIZE = 1 * 1024 * 1024 # 1MiB
     MAX_HEADER_SIZE = 16 * 1024
     HEADER_DELIMETER = b"\r\n\r\n"
     
