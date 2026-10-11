@@ -44,13 +44,6 @@ def _read_one_request(sock, buffer):
                 )
 
             buffer.extend(chunk)
-    
-        header_bytes, remaining = buffer.split(
-            b"\r\n\r\n",
-            1
-        )
-
-        remaining = bytearray(remaining)
         
         (
             method,
