@@ -144,6 +144,26 @@ def handle_client(client_socket):
 
                 break
 
+            except HTTPRequestTooLarge:
+                message = str(error)
+
+                status_code = (
+                    431 if "headers" in message.lower()
+                    else 413
+                )
+
+                response = HTTPResponse(
+                    status_code=status_code,
+                    body=message,
+                    headers={
+                        "Content-Type": "text/plain",
+                        "Connection": "close",
+                    }
+                )
+
+                client_socket.sendall(response.build())
+                break 
+
             request = HTTPRequest(
                 method=method,
                 path=path,
