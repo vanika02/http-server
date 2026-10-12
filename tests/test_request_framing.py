@@ -1,7 +1,7 @@
 import pytest
 
 from server import _read_one_request
-from exceptions import HTTPParseError, HTTPRequestTooLargeError
+from exceptions import HTTPParseError, HTTPRequestTooLarge
 
 class FakeSocket:
 
@@ -238,7 +238,7 @@ def test_header_size_above_max_length_raises_error():
     buffer = bytearray()
 
 
-    with pytest.raises(HTTPRequestTooLargeError):
+    with pytest.raises(HTTPRequestTooLarge):
         _read_one_request(
             sock,
             buffer
@@ -256,7 +256,7 @@ def test_content_length_above_max_size_raises_error():
     sock = FakeSocket([request])
     buffer = bytearray()
 
-    with pytest.raises(HTTPRequestTooLargeError):
+    with pytest.raises(HTTPRequestTooLarge):
         _read_one_request(
             sock,
             buffer
