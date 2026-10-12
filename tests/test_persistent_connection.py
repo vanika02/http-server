@@ -81,3 +81,33 @@ def test_malformed_request_returns_400():
     server_thread.join(timeout=1)
 
     assert not server_thread.is_alive()
+
+def large_header_size_returns_431():
+
+    server_socket, client_socket = socket.socketpair()
+
+    server_thread = threading.Thread(
+        target=handle_client,
+        args=(server_socket,)
+    )
+
+    server_thread.start()
+
+    oversized_header = (
+        b"GET / HTTP/1.1\r\n"
+        + b"X-Test: " + b"a * (16 * 1024)"
+    )
+
+    client_socket.sendall(request)
+
+    response = client_socket.recv(4096)
+
+    assert b"HTTP/1.1 431 Request Header Fields Too Large" in response
+    assert b"Connection: close" in response
+    assert b"Bad Request" in response
+
+    client_socket.close()
+
+    server_thread.join(timeout=1)
+
+    assert not server_thread.is_alive()
