@@ -22,14 +22,14 @@ def _read_one_request(sock, buffer):
         if header_end != -1:
             # the delimiter marks the end of the header block
             if header_end > MAX_HEADER_SIZE:
-                raise HTTPParseError("Request headers are too large")
+                raise HTTPRequestTooLarge("Request headers are too large")
 
             header_bytes = bytes(buffer[:header_end])
             remaining = bytearray(buffer[header_end + len(HEADER_DELIMETER):])
             break 
 
         if len(buffer) > MAX_HEADER_SIZE:
-            raise HTTPParseError(
+            raise HTTPRequestTooLarge(
                 "Request headers are too large"
             )
 
@@ -54,7 +54,7 @@ def _read_one_request(sock, buffer):
     ) = parse_request_head(header_bytes)
 
     if content_length > MAX_BODY_SIZE:
-        raise HTTPParseError(
+        raise HTTPRequestTooLarge(
             "Request body is too large"
         )
     
