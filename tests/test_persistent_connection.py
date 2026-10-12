@@ -109,3 +109,34 @@ def test_large_header_size_returns_431():
     server_thread.join(timeout=1)
 
     assert not server_thread.is_alive()
+
+
+def test_body_too_large_returns_413():
+
+    server_socket, client_socket = socket.socketpair()
+
+    server_thread = threading.Thread(
+        target=handle_client,
+        args=(server_socket,)
+    )
+
+    server_thread.start()
+
+    request = (
+        b"POST /signup HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Content-Length: 2000000\r\n"
+        b"\r\n"
+    )
+
+    client_socket.sendall(request)
+
+    response = client_socket.recv(4096)
+
+    assert b"HTTP/1.1 413 Content Too Large" in response
+    assert b"Connection: close" in response
+
+    client_socket.close()
+    server_thread.join(timeout=1)
+
+    assert not server_thread is_alive()
