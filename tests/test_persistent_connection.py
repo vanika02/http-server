@@ -82,7 +82,7 @@ def test_malformed_request_returns_400():
 
     assert not server_thread.is_alive()
 
-def large_header_size_returns_431():
+def test_large_header_size_returns_431():
 
     server_socket, client_socket = socket.socketpair()
 
@@ -98,7 +98,7 @@ def large_header_size_returns_431():
         + b"X-Test: " + b"a" * (16 * 1024)
     )
 
-    client_socket.sendall(request)
+    client_socket.sendall(oversized_header)
 
     response = client_socket.recv(4096)
 
