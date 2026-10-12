@@ -12,7 +12,8 @@ class HTTPResponse:
         404: "Not Found",
         405: "Method not allowed",
         409: "Conflict",
-        413: "Request Header Fields Too Large",
+        413: "Content Too Large",
+        431: "Request Header Fields Too Large",
         500: "Internal Server Error"
     }
 
