@@ -139,4 +139,4 @@ def test_body_too_large_returns_413():
     client_socket.close()
     server_thread.join(timeout=1)
 
-    assert not server_thread is_alive()
+    assert not server_thread.is_alive()
