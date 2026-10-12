@@ -95,7 +95,7 @@ def large_header_size_returns_431():
 
     oversized_header = (
         b"GET / HTTP/1.1\r\n"
-        + b"X-Test: " + b"a * (16 * 1024)"
+        + b"X-Test: " + b"a" * (16 * 1024)
     )
 
     client_socket.sendall(request)
@@ -104,10 +104,8 @@ def large_header_size_returns_431():
 
     assert b"HTTP/1.1 431 Request Header Fields Too Large" in response
     assert b"Connection: close" in response
-    assert b"Bad Request" in response
 
     client_socket.close()
-
     server_thread.join(timeout=1)
 
     assert not server_thread.is_alive()
