@@ -144,7 +144,7 @@ def handle_client(client_socket):
 
                 break
 
-            except HTTPRequestTooLarge:
+            except HTTPRequestTooLarge as error:
                 message = str(error)
 
                 status_code = (
