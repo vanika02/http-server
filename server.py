@@ -18,8 +18,6 @@ def _read_one_request(sock, buffer):
     
     while True:
 
-        sock.settimeout(5)
-
         try:
             header_end = buffer.find(HEADER_DELIMETER)
 
@@ -62,7 +60,6 @@ def _read_one_request(sock, buffer):
             content_length,
         ) = parse_request_head(header_bytes)
 
-        sock.settimeout(5)
         try:
 
             if content_length > MAX_BODY_SIZE:
@@ -193,7 +190,7 @@ def handle_client(client_socket):
                         "Connection": "close",
                     },
                 )
-                
+
                 client_socket.sendall(response.build())
                 break
             request = HTTPRequest(
