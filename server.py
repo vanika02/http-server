@@ -103,6 +103,8 @@ def run_server(host=HOST, port=PORT):
 
 def handle_client(client_socket):
 
+    client_socket.settimeout(5)
+
     buffer = bytearray()
     
     try: 
