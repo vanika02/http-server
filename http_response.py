@@ -11,6 +11,7 @@ class HTTPResponse:
         403: "Forbidden",
         404: "Not Found",
         405: "Method not allowed",
+        408: "Request Timeout",
         409: "Conflict",
         413: "Content Too Large",
         431: "Request Header Fields Too Large",
