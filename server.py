@@ -54,15 +54,17 @@ def _read_one_request(sock, buffer):
                 "Request header timeout"
             ) from exc
         
-            (
-                method,
-                path,
-                http_version,
-                headers,
-                content_length,
-            ) = parse_request_head(header_bytes)
+        (
+            method,
+            path,
+            http_version,
+            headers,
+            content_length,
+        ) = parse_request_head(header_bytes)
 
-            
+        sock.settimeout(5)
+        try:
+
             if content_length > MAX_BODY_SIZE:
                 raise HTTPRequestTooLarge(
                     "Request body is too large"
@@ -95,14 +97,14 @@ def _read_one_request(sock, buffer):
                 "Request body timeout"
             ) from exc 
 
-            return (
-                raw_request,
-                method,
-                path,
-                http_version,
-                headers,
-                request_body
-            )
+        return (
+            raw_request,
+            method,
+            path,
+            http_version,
+            headers,
+            request_body
+        )
 
 def run_server(host=HOST, port=PORT):
 
