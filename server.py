@@ -17,34 +17,42 @@ def _read_one_request(sock, buffer):
     HEADER_DELIMETER = b"\r\n\r\n"
     
     while True:
-        header_end = buffer.find(HEADER_DELIMETER)
 
-        if header_end != -1:
-            # the delimiter marks the end of the header block
-            if header_end > MAX_HEADER_SIZE:
-                raise HTTPRequestTooLarge("Request headers are too large")
+        sock.settimeout(5)
 
-            header_bytes = bytes(buffer[:header_end])
-            remaining = bytearray(buffer[header_end + len(HEADER_DELIMETER):])
-            break 
+        try:
+            header_end = buffer.find(HEADER_DELIMETER)
 
-        if len(buffer) > MAX_HEADER_SIZE:
-            raise HTTPRequestTooLarge(
-                "Request headers are too large"
-            )
+            if header_end != -1:
+                # the delimiter marks the end of the header block
+                if header_end > MAX_HEADER_SIZE:
+                    raise HTTPRequestTooLarge("Request headers are too large")
 
-        chunk = sock.recv(4096)
+                header_bytes = bytes(buffer[:header_end])
+                remaining = bytearray(buffer[header_end + len(HEADER_DELIMETER):])
+                break 
 
-        if not chunk:
-            if not buffer:
-                return None 
+            if len(buffer) > MAX_HEADER_SIZE:
+                raise HTTPRequestTooLarge(
+                    "Request headers are too large"
+                )
+        
+            chunk = sock.recv(4096)
 
-            raise ConnectionError(
-                "Socket closed while reading headers."
-            )
+            if not chunk:
+                if not buffer:
+                    return None 
 
-        buffer.extend(chunk)
-    
+                raise ConnectionError(
+                    "Socket closed while reading headers."
+                )
+
+            buffer.extend(chunk)
+
+        except TimeoutError as exc:
+            raise HeaderReadTimeout(
+                "Request header timeout"
+            ) from exc
     (
         method,
         path,
@@ -109,7 +117,6 @@ def handle_client(client_socket):
     
     try: 
         while True:
-
             try:
 
                 result = _read_one_request(
