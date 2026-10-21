@@ -6,4 +6,6 @@ class HTTPRequestTooLarge(Exception):
 
 class HeaderReadTimeout(Exception):
     """Raised when reading request headers times out."""
-    
+
+class BodyReadTimeout(Exception):
+    """Raised when reading the request body times out."""
