@@ -3,3 +3,7 @@ class HTTPParseError(Exception):
 
 class HTTPRequestTooLarge(Exception):
     """Raised when an HTTP request exceeds configured size limits."""
+
+class HeaderReadTimeout(Exception):
+    """Raised when reading request headers times out."""
+    
