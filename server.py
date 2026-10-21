@@ -182,6 +182,20 @@ def handle_client(client_socket):
                 client_socket.sendall(response.build())
                 break 
 
+            except (HeaderReadTimeout, BodyReadTimeout) as exc:
+                print(f"Request timed out: {exc}")
+
+                response = HTTPResponse(
+                    status_code=408,
+                    body="Request Timeout",
+                    headers={
+                        "Content-Type": "text/plain",
+                        "Connection": "close",
+                    },
+                )
+                
+                client_socket.sendall(response.build())
+                break
             request = HTTPRequest(
                 method=method,
                 path=path,
@@ -229,6 +243,7 @@ def handle_client(client_socket):
 
             if should_close:
                 break
+
 
     finally:
         client_socket.close()
