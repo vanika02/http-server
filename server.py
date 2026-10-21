@@ -49,6 +49,11 @@ def _read_one_request(sock, buffer):
 
             buffer.extend(chunk)
 
+        except TimeoutError as exc:
+            raise HeaderReadTimeout(
+                "Request header timeout"
+            ) from exc
+        
             (
                 method,
                 path,
@@ -85,11 +90,6 @@ def _read_one_request(sock, buffer):
             buffer.clear()
             buffer.extend(leftover)
 
-        except TimeoutError as exc:
-            raise HeaderReadTimeout(
-                "Request header timeout"
-            ) from exc
-        
         except TimeoutError as exc: 
             raise BodyReadTimeout(
                 "Request body timeout"
