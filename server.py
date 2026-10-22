@@ -13,9 +13,10 @@ PORT = 8080
 def _read_one_request(sock, buffer):
 
     """Read and extract exactly one HTTP request."""
+    config = ServerConfig()
 
-    MAX_BODY_SIZE = 1 * 1024 * 1024 # 1MiB
-    MAX_HEADER_SIZE = 16 * 1024
+    MAX_BODY_SIZE = config.max_body_size
+    MAX_HEADER_SIZE = config.max_header_size
     HEADER_DELIMETER = b"\r\n\r\n"
     
     while True:
