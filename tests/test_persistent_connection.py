@@ -2,6 +2,8 @@ import socket
 import threading
 
 from server import handle_client
+from unittest.mock import patch
+
 
 def test_two_requests_on_same_connection():
 
