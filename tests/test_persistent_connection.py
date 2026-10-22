@@ -169,3 +169,33 @@ def test_header_timeout_returns_408():
     server_thread.join(timeout=5)
 
     assert not server_thread.is_alive()
+
+def test_body_timeout_returns_408():
+
+    server_socket, client_socket = socket.socketpair()
+
+    server_thread = threading.Thread(
+        target=handle_client,
+        args=(server_socket,)
+    )
+
+    server_thread.start()
+
+    request = (
+        b"POST /signup HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Content-Length: 100\r\n"
+        b"\r\n"
+    )
+
+    client_socket.sendall(request)
+
+    response = client_socket.recv(4096)
+
+    assert b"HTTP/1.1 408 Request Timeout" in response
+    assert b"Connection: close" in response
+
+    client_socket.close()
+    server_thread.join(timeout=5)
+
+    assert not server_thread.is_alive()
