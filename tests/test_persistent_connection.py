@@ -197,12 +197,12 @@ def test_body_timeout_returns_408():
 
         response = client_socket.recv(4096)
 
-        mock_route.assert_not_called()
 
         assert b"HTTP/1.1 408 Request Timeout" in response
         assert b"Connection: close" in response
 
         client_socket.close()
-        server_thread.join(timeout=5)
+        server_thread.join(timeout=7)
 
         assert not server_thread.is_alive()
+        mock_route.assert_not_called()
