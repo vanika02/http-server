@@ -67,6 +67,9 @@ def _read_one_request(sock, buffer):
                 "Request body is too large"
             )
         
+        if content_length is None:
+            content_length = 0
+        
         while len(remaining) < content_length:
             chunk = sock.recv(4096)
 
