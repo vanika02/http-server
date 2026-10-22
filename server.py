@@ -52,56 +52,56 @@ def _read_one_request(sock, buffer):
                 "Request header timeout"
             ) from exc
         
-        (
-            method,
-            path,
-            http_version,
-            headers,
-            content_length,
-        ) = parse_request_head(header_bytes)
+    (
+        method,
+        path,
+        http_version,
+        headers,
+        content_length,
+    ) = parse_request_head(header_bytes)
 
-        try:
+    try:
 
-            if content_length > MAX_BODY_SIZE:
-                raise HTTPRequestTooLarge(
-                    "Request body is too large"
-                )
-            
-            while len(remaining) < content_length:
-                chunk = sock.recv(4096)
-
-                if not chunk:
-                    raise ConnectionError(
-                        "Socket closed before complete request body."
-                    )
-
-                remaining.extend(chunk)
-            
-            request_body = bytes(remaining[:content_length])
-            leftover = remaining[content_length:]
-
-            raw_request = (
-                header_bytes
-                + b"\r\n\r\n"
-                + request_body
+        if content_length > MAX_BODY_SIZE:
+            raise HTTPRequestTooLarge(
+                "Request body is too large"
             )
+        
+        while len(remaining) < content_length:
+            chunk = sock.recv(4096)
 
-            buffer.clear()
-            buffer.extend(leftover)
+            if not chunk:
+                raise ConnectionError(
+                    "Socket closed before complete request body."
+                )
 
-        except TimeoutError as exc: 
-            raise BodyReadTimeout(
-                "Request body timeout"
-            ) from exc 
+            remaining.extend(chunk)
+        
+        request_body = bytes(remaining[:content_length])
+        leftover = remaining[content_length:]
 
-        return (
-            raw_request,
-            method,
-            path,
-            http_version,
-            headers,
-            request_body
+        raw_request = (
+            header_bytes
+            + b"\r\n\r\n"
+            + request_body
         )
+
+        buffer.clear()
+        buffer.extend(leftover)
+
+    except TimeoutError as exc: 
+        raise BodyReadTimeout(
+            "Request body timeout"
+        ) from exc 
+
+    return (
+        raw_request,
+        method,
+        path,
+        http_version,
+        headers,
+        request_body
+    )
 
 def run_server(host=HOST, port=PORT):
 
