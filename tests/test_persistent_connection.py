@@ -174,31 +174,35 @@ def test_header_timeout_returns_408():
 
 def test_body_timeout_returns_408():
 
-    server_socket, client_socket = socket.socketpair()
+    with patch("server.route") as mock_route:
 
-    server_thread = threading.Thread(
-        target=handle_client,
-        args=(server_socket,)
-    )
+        server_socket, client_socket = socket.socketpair()
 
-    server_thread.start()
+        server_thread = threading.Thread(
+            target=handle_client,
+            args=(server_socket,)
+        )
 
-    request = (
-        b"POST /signup HTTP/1.1\r\n"
-        b"Host: localhost\r\n"
-        b"Content-Length: 100\r\n"
-        b"\r\n"
-        + b"a" * 20
-    )
+        server_thread.start()
 
-    client_socket.sendall(request)
+        request = (
+            b"POST /signup HTTP/1.1\r\n"
+            b"Host: localhost\r\n"
+            b"Content-Length: 100\r\n"
+            b"\r\n"
+            + b"a" * 20
+        )
 
-    response = client_socket.recv(4096)
+        client_socket.sendall(request)
 
-    assert b"HTTP/1.1 408 Request Timeout" in response
-    assert b"Connection: close" in response
+        response = client_socket.recv(4096)
 
-    client_socket.close()
-    server_thread.join(timeout=5)
+        mock_route.assert_not_called()
 
-    assert not server_thread.is_alive()
+        assert b"HTTP/1.1 408 Request Timeout" in response
+        assert b"Connection: close" in response
+
+        client_socket.close()
+        server_thread.join(timeout=5)
+
+        assert not server_thread.is_alive()
