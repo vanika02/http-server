@@ -186,6 +186,7 @@ def test_body_timeout_returns_408():
         b"Host: localhost\r\n"
         b"Content-Length: 100\r\n"
         b"\r\n"
+        + b"a" * 20
     )
 
     client_socket.sendall(request)
