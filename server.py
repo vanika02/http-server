@@ -61,14 +61,15 @@ def _read_one_request(sock, buffer):
     ) = parse_request_head(header_bytes)
 
     try:
+        
+        if content_length is None:
+            content_length = 0
 
         if content_length > MAX_BODY_SIZE:
             raise HTTPRequestTooLarge(
                 "Request body is too large"
             )
         
-        if content_length is None:
-            content_length = 0
         
         while len(remaining) < content_length:
             chunk = sock.recv(4096)
