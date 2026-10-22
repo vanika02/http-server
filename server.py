@@ -17,7 +17,7 @@ def _read_one_request(sock, buffer):
 
     MAX_BODY_SIZE = config.max_body_size
     MAX_HEADER_SIZE = config.max_header_size
-    HEADER_DELIMETER = b"\r\n\r\n"
+    HEADER_DELIMETER = config.header_delimiter
     
     while True:
 
