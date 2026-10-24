@@ -3,7 +3,9 @@ import threading
 
 from server import handle_client
 from unittest.mock import patch
+from config import ServerConfig
 
+config = ServerConfig()
 
 def test_two_requests_on_same_connection():
 
