@@ -126,7 +126,7 @@ def run_server(host=HOST, port=PORT):
 
 def handle_client(client_socket, config):
 
-    client_socket.settimeout(5)
+    client_socket.settimeout(config.socket_timeout)
 
     buffer = bytearray()
     
