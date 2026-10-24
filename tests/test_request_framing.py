@@ -26,7 +26,8 @@ def test_reads_complete_request():
 
     result = _read_one_request(
         sock,
-        buffer
+        buffer,
+        config
     )
 
     assert result is not None 
@@ -64,7 +65,8 @@ def test_request_split_across_multiple_recv_calls():
 
     result = _read_one_request(
         sock,
-        buffer
+        buffer,
+        config
     )
 
     assert result is not None 
@@ -97,7 +99,8 @@ def test_two_requests_in_one_recv():
 
     result1 = _read_one_request(
         sock,
-        buffer 
+        buffer,
+        config 
     )
 
     assert result1 is not None
@@ -105,7 +108,8 @@ def test_two_requests_in_one_recv():
 
     result2 = _read_one_request(
         sock,
-        buffer 
+        buffer,
+        config 
     )
 
     assert result2 is not None 
@@ -137,7 +141,8 @@ def test_request_body_and_next_request():
 
     raw_request1 = _read_one_request(
         sock,
-        buffer
+        buffer,
+        config
     )
 
     assert raw_request1 is not None
@@ -145,7 +150,8 @@ def test_request_body_and_next_request():
 
     raw_request2 = _read_one_request(
         sock,
-        buffer 
+        buffer,
+        config 
     )
 
     assert raw_request2 is not None 
@@ -170,7 +176,8 @@ def test_incomplete_body_raises_error():
     with pytest.raises(ConnectionError):
         _read_one_request(
             sock,
-            buffer
+            buffer,
+            config
         )
 
 def test_invalid_content_length_raises_error():
@@ -188,7 +195,8 @@ def test_invalid_content_length_raises_error():
     with pytest.raises(HTTPParseError):
         _read_one_request(
             sock,
-            buffer
+            buffer,
+            config
         )
 
 def test_negative_content_length_raises_error():
@@ -206,7 +214,8 @@ def test_negative_content_length_raises_error():
     with pytest.raises(HTTPParseError):
         _read_one_request(
             sock,
-            buffer
+            buffer,
+            config
         )
 
 def test_empty_content_length_raises_error():
@@ -224,7 +233,8 @@ def test_empty_content_length_raises_error():
     with pytest.raises(HTTPParseError):
         _read_one_request(
             sock,
-            buffer
+            buffer,
+            config
         )
 
 def test_header_size_above_max_length_raises_error():
@@ -241,7 +251,8 @@ def test_header_size_above_max_length_raises_error():
     with pytest.raises(HTTPRequestTooLarge):
         _read_one_request(
             sock,
-            buffer
+            buffer,
+            config
         )
 
 def test_content_length_above_max_size_raises_error():
@@ -259,5 +270,6 @@ def test_content_length_above_max_size_raises_error():
     with pytest.raises(HTTPRequestTooLarge):
         _read_one_request(
             sock,
-            buffer
+            buffer,
+            config
         )
