@@ -10,9 +10,6 @@ from config import ServerConfig
 HOST = '127.0.0.1'
 PORT = 8080
 
-config = ServerConfig()
-
-
 def _read_one_request(sock, buffer):
 
     """Read and extract exactly one HTTP request."""
@@ -115,6 +112,8 @@ def _read_one_request(sock, buffer):
 
 def run_server(host=HOST, port=PORT):
 
+    config = ServerConfig()
+
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
     server_socket.listen(1)
@@ -123,9 +122,9 @@ def run_server(host=HOST, port=PORT):
 
     while True:
         client_socket, client_address = server_socket.accept()
-        handle_client(client_socket)
+        handle_client(client_socket, config)
 
-def handle_client(client_socket):
+def handle_client(client_socket, config):
 
     client_socket.settimeout(5)
 
