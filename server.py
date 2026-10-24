@@ -21,7 +21,7 @@ def _read_one_request(sock, buffer, config):
     while True:
 
         try:
-            header_end = buffer.find(HEADER_DELIMETER)
+            header_end = buffer.find(config.header_delimiter)
 
             if header_end != -1:
                 # the delimiter marks the end of the header block
@@ -29,7 +29,7 @@ def _read_one_request(sock, buffer, config):
                     raise HTTPRequestTooLarge("Request headers are too large")
 
                 header_bytes = bytes(buffer[:header_end])
-                remaining = bytearray(buffer[header_end + len(HEADER_DELIMETER):])
+                remaining = bytearray(buffer[header_end + len(config.header_delimiter):])
                 break 
 
             if len(buffer) > MAX_HEADER_SIZE:
