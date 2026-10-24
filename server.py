@@ -67,7 +67,7 @@ def _read_one_request(sock, buffer, config):
         if content_length is None:
             content_length = 0
 
-        if content_length > MAX_BODY_SIZE:
+        if content_length > config.max_body_size:
             raise HTTPRequestTooLarge(
                 "Request body is too large"
             )
