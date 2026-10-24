@@ -2,6 +2,10 @@ import pytest
 
 from server import _read_one_request
 from exceptions import HTTPParseError, HTTPRequestTooLarge
+from config import ServerConfig
+
+
+config = ServerConfig()
 
 class FakeSocket:
 
