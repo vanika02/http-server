@@ -10,6 +10,9 @@ from config import ServerConfig
 HOST = '127.0.0.1'
 PORT = 8080
 
+config = ServerConfig()
+
+
 def _read_one_request(sock, buffer):
 
     """Read and extract exactly one HTTP request."""
