@@ -11,7 +11,7 @@ def test_two_requests_on_same_connection():
 
     server_thread = threading.Thread(
         target=handle_client,
-        args=(server_socket,)
+        args=(server_socket, config)
     )
 
     server_thread.start()
@@ -58,7 +58,7 @@ def test_malformed_request_returns_400():
 
     server_thread = threading.Thread(
         target=handle_client,
-        args=(server_socket,)
+        args=(server_socket, config)
     )
 
     server_thread.start()
@@ -90,7 +90,7 @@ def test_large_header_size_returns_431():
 
     server_thread = threading.Thread(
         target=handle_client,
-        args=(server_socket,)
+        args=(server_socket, config)
     )
 
     server_thread.start()
@@ -119,7 +119,7 @@ def test_body_too_large_returns_413():
 
     server_thread = threading.Thread(
         target=handle_client,
-        args=(server_socket,)
+        args=(server_socket, config)
     )
 
     server_thread.start()
@@ -149,7 +149,7 @@ def test_header_timeout_returns_408():
 
     server_thread = threading.Thread(
         target=handle_client,
-        args=(server_socket,)
+        args=(server_socket, config)
     )
 
     server_thread.start()
@@ -180,7 +180,7 @@ def test_body_timeout_returns_408():
 
         server_thread = threading.Thread(
             target=handle_client,
-            args=(server_socket,)
+            args=(server_socket, config)
         )
 
         server_thread.start()

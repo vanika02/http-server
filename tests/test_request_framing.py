@@ -5,7 +5,7 @@ from exceptions import HTTPParseError, HTTPRequestTooLarge
 from config import ServerConfig
 
 
-config = ServerConfig()
+config = ServerConfig(socket_timeout=0.1)
 
 class FakeSocket:
 
