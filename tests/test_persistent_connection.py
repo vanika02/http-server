@@ -5,7 +5,7 @@ from server import handle_client
 from unittest.mock import patch
 from config import ServerConfig
 
-config = ServerConfig()
+config = ServerConfig(socket_timeout=0.1)
 
 def test_two_requests_on_same_connection():
 
