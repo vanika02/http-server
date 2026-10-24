@@ -136,7 +136,8 @@ def handle_client(client_socket, config):
 
                 result = _read_one_request(
                     client_socket,
-                    buffer
+                    buffer,
+                    config
                 )
                 
                 if result is None:
