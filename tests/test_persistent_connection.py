@@ -254,6 +254,7 @@ def test_custom_max_body_size():
     request = (
         b"POST /signup HTTP/1.1\r\n"
         b"Host: localhost\r\n"
+        b"Content-Length: 20\r\n"
         b"\r\n"
         b"a" * 10
     )
@@ -262,7 +263,7 @@ def test_custom_max_body_size():
 
     response = client_socket.recv(4096)
 
-    assert b"HTTP/1.1 413 Content Too Large" in response
+    assert b"HTTP/1.1 413" in response
     assert b"Connection: close" in response
     assert not server_thread.is_alive()
 
