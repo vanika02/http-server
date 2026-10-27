@@ -213,7 +213,7 @@ def test_custom_max_header_size():
 
     server_socket, client_socket = socket.socketpair()
 
-    config = ServerConfig(max_body_size=10)
+    config = ServerConfig(max_header_size=100)
     server_thread = threading.Thread(
         target=handle_client,
         args=(server_socket, config)
@@ -225,8 +225,7 @@ def test_custom_max_header_size():
         b"POST /signup HTTP/1.1\r\n"
         b"Host: localhost\r\n"
         b"Content-Length: 10\r\n"
-        b"\r\n"
-        + b"a" * 10
+        b"X-Test: " + b"a" * 100 + b"\r\n"
     )
 
     client_socket.sendall(request)
