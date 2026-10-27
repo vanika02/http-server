@@ -208,3 +208,33 @@ def test_body_timeout_returns_408():
 
         assert not server_thread.is_alive()
         mock_route.assert_not_called()
+
+def test_custom_max_header_size():
+
+    server_socket, client_socket = socket.socketpair()
+
+    config = ServerConfig(max_body_size=10)
+    server_thread = threading.Thread(
+        target=handle_client,
+        args=(server_socket, config)
+    )
+
+    server_thread.start()
+
+    request = (
+        b"POST /signup HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Content-Length: 10\r\n"
+        b"\r\n"
+        + b"a" * 10
+    )
+
+    client_socket.sendall(request)
+
+    response = client_socket.recv(4096)
+
+    assert b"HTTP1.1 413 Content Too Large" in response
+    assert b"Connection: close" in response
+
+    client_socket.close()
+    server_thread.join(timeout=1)
