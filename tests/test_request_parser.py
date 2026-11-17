@@ -79,3 +79,17 @@ def test_tab_seperator_in_request_line():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+def test_valid_extension_method():
+    request = (
+        b"PATCH /resource HTTP/1.1\r\n"
+        b"Host: localhost"
+    )
+
+    method, path, version, headers, content_length = (
+        parse_request_head(request)
+    )
+
+    assert method == "PATCH"
+    assert path == "/resource"
+    assert version == "HTTP/1.1"
