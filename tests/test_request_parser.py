@@ -52,3 +52,12 @@ def test_malformed_request_line():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+def test_invalid_method_token():
+    request = (
+        b"GE@T / HTTP/1.1\r\n"
+        b"Host: localhost"
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
