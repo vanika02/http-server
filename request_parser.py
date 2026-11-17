@@ -96,56 +96,68 @@ def parse_request_head(header_bytes: bytes):
     
     headers = {}
     content_lengths = []
+    transfer_encoding = False 
 
     for line in header_lines[1:]:
 
         if not line:
             continue
 
+        if line.startswith((b" ", b"\t")):
+            raise HTTPParseError("Folded headers are not supported")
+
         if b":" not in line:
             raise HTTPParseError(
                 "Malformed header"
             )
+
         key_bytes, value_bytes = line.split(b":", 1)
+
+        if not METHOD_TOKEN_PATTERN.fullmatch(key_bytes):
+            raise HTTPParseError("Invalid header name")
 
         try:
             key = key_bytes.decode("ascii").lower()
-            value = value_bytes.strip().decode("ascii")
+            value = value_bytes.strip(b" \t").decode("ascii")
         except UnicodeDecodeError as exc:
             raise HTTPParseError(
                 "Invlid header encoding"
             ) from exc 
         
-        if not key:
-            raise HTTPParseError("Empty header name")
-            
-        headers[key] = value
+        if any(
+            (byte < 32 and byte != 9) or byte == 127
+            for byte in value_bytes
+        ):
+            raise HTTPParseError("Invalid header value")
 
         if key == "content-length":
-            try:
-                length = int(value)
-            except ValueError as exc:
-                raise HTTPParseError(
-                    "Invalid Content-Length"
-                ) from exc 
+            if not value.isdigit():
+                raise HTTPParseError("Invalid Content-Length")
             
-            if length < 0:
-                raise HTTPParseError(
-                    "Content-Length cannot be negative"
-                )
-            
+            length = int(value)
+
             content_lengths.append(length)
+        
+        elif key == "transfer-encoding":
+            transfer_encoding = True 
+
+        if key in headers:
+            headers[key] += ", " + value
+        else:
+            headers[key] = value
+
+        headers[key] = value
+        
 
     if len(content_lengths) > 1:
         raise HTTPParseError(
             "Duplicate Content-Length"
         )
     
-    content_length = (
-        content_lengths[0]
-        if content_lengths
-        else 0
-    )
+    if transfer_encoding:
+        raise HTTPParseError("Transfer-Encoding is not supported")
+
+    content_length = content_lengths[0] if content_lengths else 0 
 
     return (
         method,
