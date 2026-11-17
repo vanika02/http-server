@@ -70,3 +70,12 @@ def test_repeated_spaces_in_request_line():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+def test_tab_seperator_in_request_line():
+    request = (
+        b"GET\t/\tHTTP/1.1\r\n"
+        b"Host: localhost"
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
