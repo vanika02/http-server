@@ -28,3 +28,12 @@ def test_duplicate_content_length_raises_error():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+def test_unsupported_http_version():
+    request = (
+        b"GET / HTTP/2.0\r\n"
+        b"Host: localhost"
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
