@@ -93,3 +93,12 @@ def test_valid_extension_method():
     assert method == "PATCH"
     assert path == "/resource"
     assert version == "HTTP/1.1"
+
+def test_invalid_name_with_space():
+    request = (
+        b"GET / HTTP/1.1\r\n"
+        b"Content Length: 5"
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
