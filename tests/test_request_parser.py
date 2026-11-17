@@ -46,7 +46,7 @@ def test_empty_request_target():
 
 def test_malformed_request_line():
     request = (
-        b"GET /HTTP/1.1 EXTRA\r\n"
+        b"GET / HTTP/1.1 EXTRA\r\n"
         b"Host: localhost"
     )
 

@@ -1,4 +1,15 @@
+import re 
+
 from exceptions import HTTPParseError
+
+METHOD_TOKEN_PATTERN = re.compile(
+    rb"^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$"
+)
+
+SUPPORTED_HTTP_VERSIONS = {
+    b"HTTP/1.0",
+    b"HTTP/1.1"
+}
 
 class HTTPRequest:
     """
@@ -49,47 +60,65 @@ class HTTPRequest:
 def parse_request_head(header_bytes: bytes):
     header_lines = header_bytes.split(b"\r\n")
 
-    if not header_lines:
+    if not header_lines or not header_lines[0]:
         raise HTTPParseError(
             "Empty request"
         )
     
-    request_line = header_lines[0].split()
+    request_line = header_lines[0]
 
-    if len(request_line) != 3:
-        raise HTTPParseError(
-            "Malformed request line"
-        )
+    if request_line.count(b" ") != 2:
+        raise HTTPParseError("Malformed request line")
+    
+    method_bytes, path_bytes, version_bytes = request_line.split(b" ")
+
+    if not method_bytes or not path_bytes or not version_bytes:
+        raise HTTPParseError("Malformed request line")
+
+    if not METHOD_TOKEN_PATTERN.fullmatch(method_bytes):
+        raise HTTPParseError("Invalid HTTP method")
+
+    if version_bytes not in SUPPORTED_HTTP_VERSIONS:
+        raise HTTPParseError("Unsupported HTTP version")
+
+    if any(byte <= 32 or byte == 127 for byte in path_bytes):
+        raise HTTPParseError("Invalid request target")
     
     try:
-        method = request_line[0].decode()
-        path = request_line[1].decode()
-        http_version = request_line[2].decode()
+        method = method_bytes.decode("ascii")
+        path = path_bytes.decode("ascii")
+        http_version = version_bytes.decode("ascii")
+
     except UnicodeDecodeError as exc:
         raise HTTPParseError(
             "Invalid request encoding"
         ) from exc 
     
-
     headers = {}
     content_lengths = []
 
     for line in header_lines[1:]:
 
+        if not line:
+            continue
+
         if b":" not in line:
             raise HTTPParseError(
                 "Malformed header"
             )
-        key, value = line.split(b":", 1)
+        key_bytes, value_bytes = line.split(b":", 1)
 
         try:
-            key = key.strip().decode().lower()
-            value = value.strip().decode()
+            key = key_bytes.decode("ascii").lower()
+            value = value_bytes.strip().decode("ascii")
         except UnicodeDecodeError as exc:
             raise HTTPParseError(
                 "Invlid header encoding"
             ) from exc 
         
+        if not key:
+            raise HTTPParseError("Empty header name")
+            
         headers[key] = value
 
         if key == "content-length":
