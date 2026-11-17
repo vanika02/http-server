@@ -102,3 +102,12 @@ def test_invalid_name_with_space():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+def test_invalid_header_name_with_whitespace_before_colon():
+    request = (
+        b"GET / HTTP/1.1\r\n"
+        b"Host : localhost"
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
