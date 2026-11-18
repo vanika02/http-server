@@ -33,3 +33,10 @@ def test_caller_provided_content_type_is_preserved():
 
     assert b"Content-Type: application/json" in result
     assert b"Content-Type: text/plain; charset=utf-8" not in result
+
+def test_default_connection_header_is_present():
+    response = HTTPResponse()
+
+    result = response.build()
+
+    assert b"Connection: close" in result
