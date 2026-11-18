@@ -44,7 +44,7 @@ def test_default_connection_header_is_present():
 def test_204_no_content_has_no_body():
     response = HTTPResponse(
         status_code=204,
-        body=""
+        body="This must not be sent"
     )
 
     result = response.build()

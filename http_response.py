@@ -31,16 +31,22 @@ class HTTPResponse:
     def build(self):
         
         body_bytes = self.body.encode("utf-8")
+        headers = self.headers.copy()
 
-        self.headers.setdefault(
-            "Content-Length",
-            str(len(body_bytes))
-        )
+        if self.status_code == 204:
+            body_bytes = b""
+            headers.pop("Content-Length", None)
+        
+        else:
+            self.headers.setdefault(
+                "Content-Length",
+                str(len(body_bytes))
+            )
 
-        self.headers.setdefault(
-            "Content-Type",
-            "text/plain; charset=utf-8"
-        )
+            self.headers.setdefault(
+                "Content-Type",
+                "text/plain; charset=utf-8"
+            )
 
         self.headers.setdefault(
             "Connection",
@@ -59,11 +65,9 @@ class HTTPResponse:
             )
         )
 
-        response = []
-
-        response.append(
+        response = [
             f"{self.http_version} {self.status_code} {self.reason}"
-        )
+        ]
 
         for key, value in self.headers.items():
             response.append(
