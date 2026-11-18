@@ -152,3 +152,13 @@ def test_transfer_encoding_is_rejected():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+def test_transfer_encoding_with_content_length_is_rejected():
+    request = (
+        b"POST / HTTP/1.1\r\n"
+        b"Content-Length: 5\r\n"
+        b"Transfer-Encoding: chunked"
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
