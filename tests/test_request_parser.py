@@ -94,15 +94,6 @@ def test_valid_extension_method():
     assert path == "/resource"
     assert version == "HTTP/1.1"
 
-def test_invalid_name_with_space():
-    request = (
-        b"GET / HTTP/1.1\r\n"
-        b"Content Length: 5"
-    )
-
-    with pytest.raises(HTTPParseError):
-        parse_request_head(request)
-
 def test_invalid_header_name_with_whitespace_before_colon():
     request = (
         b"GET / HTTP/1.1\r\n"
@@ -116,6 +107,15 @@ def test_invalid_header_name_with_space():
     request = (
         b"GET / HTTP/1.1\r\n"
         b"Content Length: 5"
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
+
+def test_header_name_cannot_start_with_whitespace():
+    request = (
+        b"GET / HTTP/1.1\r\n"
+        b" Host: localhost"
     )
 
     with pytest.raises(HTTPParseError):
