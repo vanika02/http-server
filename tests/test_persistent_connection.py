@@ -234,10 +234,12 @@ def test_custom_max_header_size():
 
     assert b"HTTP/1.1 431" in response
     assert b"Connection: close" in response
+
+    server_thread.join(timeout=1)
+
     assert not server_thread.is_alive()
 
     client_socket.close()
-    server_thread.join(timeout=1)
 
 def test_custom_max_body_size():
 
@@ -265,7 +267,9 @@ def test_custom_max_body_size():
 
     assert b"HTTP/1.1 413" in response
     assert b"Connection: close" in response
+
+    server_thread.join(timeout=1)
+    
     assert not server_thread.is_alive()
 
     client_socket.close()
-    server_thread.join(timeout=1)
