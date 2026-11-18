@@ -173,3 +173,9 @@ def test_valid_content_length():
 
     assert headers["content-length"] == "25"
     assert content_length == 25
+
+def test_missing_host_header():
+    request = b"GET / HTTP/1.1"
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
