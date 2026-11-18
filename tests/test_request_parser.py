@@ -120,3 +120,13 @@ def test_header_name_cannot_start_with_whitespace():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+def test_folded_header_is_rejected():
+    request = (
+        b"GET / HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b" continuation"
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
