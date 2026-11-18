@@ -40,3 +40,16 @@ def test_default_connection_header_is_present():
     result = response.build()
 
     assert b"Connection: close" in result
+
+def test_204_no_content_has_no_body():
+    response = HTTPResponse(
+        status_code=204,
+        body=""
+    )
+
+    result = response.build()
+
+    header_bytes, body_bytes = result.split(b"\r\n\r\n", 1)
+
+    assert header_bytes.startswith(b"HTTP/1.1 204 No Content")
+    assert body_bytes == b""
