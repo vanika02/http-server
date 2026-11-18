@@ -21,7 +21,8 @@ ROUTES = {
 def route(method, path, body=""):
     
     if path not in ROUTES:
-        return not_found()
+        status, content_type, response_body = not_found()
+        return status, content_type, response_body, {}
 
     allowed_methods = ROUTES[path]
 
@@ -30,11 +31,16 @@ def route(method, path, body=""):
             405,
             "text/plain",
             "405 Method Not Allowed",
+            {
+                "Allow": ", ".join(allowed_methods.keys())
+            }
         )
 
     handler = allowed_methods[method]
 
     if method == "POST":
-        return handler(body)
+        status, content_type, response_body = handler(body)
+    else:
+        status, content_type, response_body = handler()
     
-    return handler()
+    return status, content_type, response_body, {}
