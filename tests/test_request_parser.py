@@ -130,3 +130,16 @@ def test_folded_header_is_rejected():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+@pytest.mark.parametrize(
+    "content_length",
+    [b"+5", b"-5", b"5.0", b"abc", b""],
+)
+def test_invalid_content_length(content_length):
+    request = (
+        b"POST / HTTP/1.1\r\n"
+        b"Content-Length: " + content_length
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
