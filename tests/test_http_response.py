@@ -22,3 +22,14 @@ def test_content_length_for_utf8_body():
     expected_length = len(body.encode("utf-8"))
 
     assert f"Content-Length: {expected_length}".encode() in result
+
+def test_caller_provided_content_type_is_preserved():
+    response = HTTPResponse(
+        headers={"Content-Type": "application/json"},
+        body='{"message": "success"}'
+    )
+
+    result = response.build()
+
+    assert b"Content-Type: application/json" in result
+    assert b"Content-Type: text/plain; charset=utf-8" not in result
