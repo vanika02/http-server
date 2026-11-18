@@ -198,3 +198,14 @@ def test_empty_host_header():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+def test_vaild_host_header():
+    request = (
+        b"GET / HTTP/1.1\r\n"
+        b"Host: localhost:8000"
+    )
+
+    _, _, _, headers, content_length = parse_request_head(request)
+
+    assert headers["host"] == "localhost:8000"
+    assert content_length == 0
