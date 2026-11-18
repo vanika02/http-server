@@ -179,3 +179,13 @@ def test_missing_host_header():
 
     with pytest.raises(HTTPParseError):
         parse_request_head(request)
+
+def test_duplicate_host_header():
+    request = (
+        b"GET / HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
+        b"Host: example.com"
+    )
+
+    with pytest.raises(HTTPParseError):
+        parse_request_head(request)
