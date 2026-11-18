@@ -10,7 +10,7 @@ class HTTPResponse:
         401: "Unauthorized",
         403: "Forbidden",
         404: "Not Found",
-        405: "Method not allowed",
+        405: "Method Not Allowed",
         408: "Request Timeout",
         409: "Conflict",
         413: "Content Too Large",
@@ -75,7 +75,3 @@ class HTTPResponse:
         header_bytes = "\r\n".join(response).encode("utf-8")
 
         return header_bytes + b"\r\n" + body_bytes
-
-
-# current questions are why headers are {}
-# init function explanation, self  and this line self.reason = self.STATUS_CODES[status_code]
