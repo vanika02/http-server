@@ -97,6 +97,7 @@ def parse_request_head(header_bytes: bytes):
     headers = {}
     content_lengths = []
     transfer_encoding = False 
+    host_count = 0
 
     for line in header_lines[1:]:
 
@@ -141,13 +142,25 @@ def parse_request_head(header_bytes: bytes):
         elif key == "transfer-encoding":
             transfer_encoding = True 
 
+        if key == "host":
+            host_count += 1 
+
+            if not value:
+                raise HTTPParseError("Empty Host header")
+
+            if host_count > 1:
+                raise HTTPParseError("Duplicate Host header")
+
+
         if key in headers:
             headers[key] += ", " + value
         else:
             headers[key] = value
 
-        headers[key] = value
-        
+    if http_version == "HTTP/1.1" and host_count != 1:
+        raise HTTPParseError(
+            "HTTP/1.1 required exactly one Host header"
+        )
 
     if len(content_lengths) > 1:
         raise HTTPParseError(

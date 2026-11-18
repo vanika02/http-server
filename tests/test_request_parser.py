@@ -166,6 +166,7 @@ def test_transfer_encoding_with_content_length_is_rejected():
 def test_valid_content_length():
     request = (
         b"POST / HTTP/1.1\r\n"
+        b"Host: localhost\r\n"
         b"Content-Length: 25"
     )
 
