@@ -9,7 +9,40 @@ def json_response(status_code, message):
         "application/json",
         json.dumps({"message": message})
     )
+
+def parse_user_data(body):
+    """
+    Parse and validate the request body.
+
+    Returns:
+        dict: Validated user data.
+
+    Raises:
+        ValueError: If JSON is invalid or not a JSON object.
+    """
+
+    try:
+        data = json.loads(body)
+    except json.JSONDecodeError as exc:
+        raise ValueError("Invalid JSON") from exc 
     
+    if not isinstance(data, dict):
+        raise ValueError("JSON body must be an object")
+    
+    username = data.get("username")
+    password = data.get("password")
+
+    if not isinstance(username, str) or not username.strip():
+        raise ValueError("Missing or invalid username")
+
+    if not isinstance(password, str) or not password:
+        raise ValueError("Missing or invalid password")
+    
+    return {
+        "username": username.strip(),
+        "password": password
+    }
+
 def home():
     return 200, "text/plain", "Hello Dharampal"
 
