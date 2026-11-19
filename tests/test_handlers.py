@@ -53,3 +53,29 @@ def test_signup_missing_fields():
 
     assert status == 400
     assert json.loads(body)["message"] == "Missing or invalid password"
+
+def test_login_success():
+    handlers.users["Rani"] = "1234"
+
+    status, _, body = handlers.login(
+        '{"username": "Rani", "password": "1234"}'
+    )
+
+    assert status == 200
+    assert json.loads(body)["message"] == "Login success"
+
+def test_login_invalid_credentials():
+    handlers.users["Rani"] = "1234"
+
+    status, _, body = handlers.login(
+        '{"username": "Rani", "password": "wrong"}'
+    )
+
+    assert status == 401 
+    assert json.loads(body)["message"] == "Invalid credentials"
+
+def test_login_invalid_json():
+    status, _, body = handlers.login("{invalid}")
+
+    assert status == 400
+    assert json.loads(body)["message"] == "Invalid JSON"
