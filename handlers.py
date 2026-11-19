@@ -2,6 +2,14 @@ import json
 
 users = {}
 
+def json_response(status_code, message):
+    """Create a consistent JSON response."""
+    return (
+        status_code,
+        "application/json",
+        json.dumps({"message": message})
+    )
+    
 def home():
     return 200, "text/plain", "Hello Dharampal"
 
