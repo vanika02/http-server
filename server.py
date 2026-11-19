@@ -112,28 +112,54 @@ def run_server(host=HOST, port=PORT):
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    server_socket.setsocket(socket.SQL_SOCKET, socket.SO_REUSEADDR)
+    server_socket.setsocket(socket.SQL_SOCKET, socket.SO_REUSEADDR, 1)
 
     server_socket.bind((host, port))
     server_socket.listen(10)
 
+    shutdown_event = threading.Event()
+    workers = set()
+    workers_lock = threading.Lock()
+
     print(f"server running on http://{HOST}:{PORT}")
 
     try:
-        while True:
-            client_socket, client_address = server_socket.accept()
+        while not shutdown_event.is_set():
+            try:
+                client_socket, client_address = server_socket.accept()
+            
+            except OSError:
+                if shutdown_event.is_set():
+                    break
+                raise 
 
             print(f"Connection from {client_address}")
 
             client_thread = threading.Thread(
                 target=handle_client,
                 args=(client_socket, config),
-                daemon=True 
+                daemon=False 
             )
 
+            with workers_lock:
+                workers.add(client_thread)
+
             client_thread.start()
+    
+    except KeyboardInterrupt:
+        print("\nShutdown requested")
+
     finally:
+        shutdown_event.set()
         server_socket.close()
+
+        with workers_lock:
+            active_workers = list(workers)
+
+        for worker in active_workers:
+            worker.join()
+
+        print("Server shutdown complete")
 
 def handle_client(client_socket, config):
 
