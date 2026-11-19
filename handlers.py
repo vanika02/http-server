@@ -61,7 +61,7 @@ def login(body):
     try:
         data = parse_user_data(body)
     except ValueError as exc:
-        raise json_response(400, str(exc))
+        return json_response(400, str(exc))
 
     username = data.get("username")
     password = data.get("password")

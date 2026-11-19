@@ -37,7 +37,7 @@ def test_two_requests_on_same_connection():
     response1 = client_socket.recv(4096)
 
     assert b"HTTP/1.1 200 OK" in response1
-    assert b"Hello Dharampal" in response1
+    assert b"Hello, Welcome to the http-server home page" in response1
     assert b"Connection: keep-alive" in response1 
 
     client_socket.sendall(request2)
@@ -45,7 +45,7 @@ def test_two_requests_on_same_connection():
     response2 = client_socket.recv(4096)
 
     assert b"HTTP/1.1 200 OK" in response2
-    assert b"About Your Mom" in response2
+    assert b"This is the about page" in response2
     assert b"Connection: close" in response2
 
     client_socket.close()

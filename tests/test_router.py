@@ -19,7 +19,7 @@ def test_supported_method_calls_handler():
 
     assert status == 200
     assert content_type == "text/plain"
-    assert body == "About Your Mom"
+    assert body == "This is the about page"
     assert headers == {}
 
 def test_405_allow_header_for_signup():

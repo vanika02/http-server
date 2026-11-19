@@ -14,7 +14,7 @@ def test_signup_success():
 
     assert status == 201
     assert content_type == "application/json"
-    assert join.loads(body)["message"] == "User created"
+    assert json.loads(body)["message"] == "User created"
     assert handlers.users["Rani"] == "1234"
 
 def test_signup_duplicate_user():
