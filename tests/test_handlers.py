@@ -32,3 +32,24 @@ def test_signup_invalid_json():
 
     assert status == 400
     assert json.loads(body)["message"] == "Invalid JSON"
+
+@pytest.mark.parametrize("body", [
+    "[]",
+    '"hello"',
+    "null",
+    "123"
+])
+def test_signup_non_object_json(body):
+    status, _, response_body = handlers.signup(body)
+
+    assert status == 400
+    assert json.loads(response_body)["message"] == "JSON body must be an object"
+
+
+def test_signup_missing_fields():
+    status, _, body = handlers.signup(
+        '{"username": "alice"}'
+    )
+
+    assert status == 400
+    assert json.loads(body)["message"] == "Missing or invalid password"
