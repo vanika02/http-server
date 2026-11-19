@@ -5,7 +5,7 @@ from server import handle_client
 from config import ServerConfig
 
 def test_multiple_clients_can_connect_concurrently():
-    server = server.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(("127.0.0.1", 0))
     server.listen(10)
 
@@ -13,7 +13,7 @@ def test_multiple_clients_can_connect_concurrently():
     config = ServerConfig()
 
     server_thread = threading.Thread(
-        target=lamda: [
+        target=lambda: [
             handle_client(server.accept()[0], config)
             for _ in range(5)
         ],
