@@ -44,33 +44,32 @@ def parse_user_data(body):
     }
 
 def home():
-    return 200, "text/plain", "Hello Dharampal"
+    return 200, "text/plain", "Hello, Welcome to the http-server home page"
 
 def about():
-    return 200, "text/plain", "About Your Mom"
+    return 200, "text/plain", "This is the about page"
 
 def api():
     data = {
-        "name" : "Dharampal the great",
-        "role" : "Tuzya ichi"
+        "name" : "Vanika",
+        "role" : "Creator"
     }
+
     return 200, "application/json", json.dumps(data)
 
 def login(body):
-    data = json.loads(body)
+    try:
+        data = parse_user_data(body)
+    except ValueError as exc:
+        raise json_response(400, str(exc))
 
     username = data.get("username")
     password = data.get("password")
 
     if username in users and users[username] == password:
-        return 200, "application/json", json.dumps({
-            "message": "Login success"
-        }) 
+        return json_response(200, "Login success")
 
-    else:
-        return 401, "application/json", json.dumps({
-            "message": "Invalid credentials"
-        })
+    return json_response(401, "Invalid credentials")
     
 def signup(body):
     try:
