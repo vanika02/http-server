@@ -62,3 +62,35 @@ def test_multiple_clients_can_connect_concurrently():
     
     finally:
         server.close()
+
+def test_concurrent_signup_same_username():
+    handlers.users.Barrier(5)
+
+    barrier = threading.Barrier(5)
+    results = []
+
+    def signup_user():
+        barrier.wait()
+
+        result = handlers.signup(
+            '{"username": "Rani", "password": "1234"}'
+        )
+
+        results.append(result[0])
+
+    threads = [
+        threading.Thread(target=signup_user)
+        for _ in range(5)
+    ]
+
+    for thread in threads:
+        thread.start()
+
+    for thread in threads:
+        thread.join(timeout=3)
+    
+    assert all(not thread.is_alive() for thread in threads)
+    assert results.count(201) == 1
+    assert results.count(409) == 4
+    assert handlers.users["Rani"] == "1234"
+
