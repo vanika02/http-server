@@ -1,6 +1,8 @@
+import threading
 import json
 
 users = {}
+users_lock = threading.lock()
 
 def json_response(status_code, message):
     """Create a consistent JSON response."""
@@ -63,12 +65,17 @@ def login(body):
     except ValueError as exc:
         return json_response(400, str(exc))
 
-    username = data.get("username")
-    password = data.get("password")
+    username = data["username"]
+    password = data["password"]
 
-    if username in users and users[username] == password:
+    with users_lock:
+        valid_credentials = (
+            username in users and users[username] == password
+        )
+
+    if valid_credentials:
         return json_response(200, "Login success")
-
+    
     return json_response(401, "Invalid credentials")
     
 def signup(body):
@@ -77,11 +84,12 @@ def signup(body):
     except ValueError as exc:
         return json_response(400, str(exc))
 
-    username = data.get("username")
-    password = data.get("password")
+    username = data["username"]
+    password = data["password"]
 
-    if username in users:
-        return json_response(409, "User already exists")
+    with users_lock:
+        if username in users:
+            return json_response(409, "User already exists")
 
     users[username] = password
 
