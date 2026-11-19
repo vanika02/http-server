@@ -1,6 +1,7 @@
 import socket
 import threading
 
+import handlers
 from server import handle_client
 from config import ServerConfig
 
@@ -64,7 +65,7 @@ def test_multiple_clients_can_connect_concurrently():
         server.close()
 
 def test_concurrent_signup_same_username():
-    handlers.users.Barrier(5)
+    handlers.users.clear()
 
     barrier = threading.Barrier(5)
     results = []

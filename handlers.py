@@ -2,7 +2,7 @@ import threading
 import json
 
 users = {}
-users_lock = threading.lock()
+users_lock = threading.Lock()
 
 def json_response(status_code, message):
     """Create a consistent JSON response."""
