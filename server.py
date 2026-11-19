@@ -227,18 +227,24 @@ def handle_client(client_socket, config):
             path = request.path
             body = request.body
 
-            status, content_type, response_body = route(
+            status, content_type, response_body, extra_headers = route(
                 method, path, body
             )
+            
+            response_headers = {
+                "Content-Type": content_type,
+                "Connection": "close" if should_close else "keep-alive"
+            }
+
+            response_headers.update(extra_headers)
 
             response = HTTPResponse(
                 status_code=status,
                 body=response_body,
-                headers={
-                    "Content-Type": content_type,
-                    "Connection": "close" if should_close else "keep-alive"
-                },
+                headers=response_headers
             )
+
+            response_bytes = response.build()
 
             print("Sending response:", response.build()[:100])
             client_socket.sendall(response.build())
