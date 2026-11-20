@@ -58,6 +58,8 @@ class HTTPRequest:
         )
         
 def parse_request_head(header_bytes: bytes):
+    """Parse and validate an HTTP request line and its headers."""
+
     header_lines = header_bytes.split(b"\r\n")
 
     if not header_lines or not header_lines[0]:
@@ -120,6 +122,7 @@ def parse_request_head(header_bytes: bytes):
         try:
             key = key_bytes.decode("ascii").lower()
             value = value_bytes.strip(b" \t").decode("ascii")
+            
         except UnicodeDecodeError as exc:
             raise HTTPParseError(
                 "Invlid header encoding"
