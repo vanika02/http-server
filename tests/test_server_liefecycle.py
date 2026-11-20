@@ -41,3 +41,57 @@ def test_client_worker_removes_itself_after_disconnect():
         assert worker not in client_sockets
     
     server_socket.close()
+
+def test_run_server_shuts_down_with_active_clients():
+
+    temporary_socket = socket.socket(
+        socket.AF_INET,
+        socket.SOCK_STREAM
+    )
+
+    temporary_socket.bind(("127.0.0.1", 0))
+    port = temporary_socket.getsockname()[1]
+    temporary_socket.close()
+
+    shutdown_event = threading.Event()
+
+    server_thread = threading.Thread(
+        target=run_server,
+        kwargs={
+            "host": "127.0.0.1",
+            "port": port,
+            "shutdown_event": shutdown_event,
+        },
+    )
+
+    server_thread.start()
+
+    clients = []
+
+    try:
+
+        for _ in range(3):
+            client = socket.create_connection(
+                ("127.0.0.1", port),
+                timeout=2
+            )
+
+            clients.append(client)
+
+        shutdown_event.set()
+
+        server_thread.join(timeout=5)
+
+        assert not server_thread.is_alive(), (
+            "Server did not terminate after shutdown"
+        )
+
+    finally:
+        shutdown_event.set()
+
+        for client in clients:
+            client.close()
+        
+        server_thread.join(timeout=5)
+    
+    assert not server_thread.is_alive()
