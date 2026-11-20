@@ -1,8 +1,10 @@
 import socket 
 import threading
+import time 
 
 from config import ServerConfig
 from server import _client_worker, run_server
+import server as server_module 
 
 def test_client_worker_removes_itself_after_disconnect():
     server_socket, client_socket = socket.socketpair()
@@ -94,4 +96,108 @@ def test_run_server_shuts_down_with_active_clients():
         
         server_thread.join(timeout=5)
     
+    assert not server_thread.is_alive()
+
+
+def test_run_server_shuts_down_with_active_clients(monkeypatch):
+    temporary_socket = socket.socket(
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+    )
+    temporary_socket.bind(("127.0.0.1", 0))
+    port = temporary_socket.getsockname()[1]
+    temporary_socket.close()
+
+    shutdown_event = threading.Event()
+
+    worker_threads = []
+    worker_threads_lock = threading.Lock()
+    all_workers_started = threading.Event()
+
+    original_worker = server_module._client_worker
+
+    def tracked_worker(*args, **kwargs):
+        current_thread = threading.current_thread()
+
+        with worker_threads_lock:
+            worker_threads.append(current_thread)
+
+            if len(worker_threads) == 3:
+                all_workers_started.set()
+
+        original_worker(*args, **kwargs)
+
+    monkeypatch.setattr(
+        server_module,
+        "_client_worker",
+        tracked_worker,
+    )
+
+    server_thread = threading.Thread(
+        target=server_module.run_server,
+        kwargs={
+            "host": "127.0.0.1",
+            "port": port,
+            "shutdown_event": shutdown_event,
+        },
+    )
+
+    clients = []
+
+    server_thread.start()
+
+    try:
+        deadline = time.monotonic() + 5
+
+        while time.monotonic() < deadline:
+            try:
+                client = socket.create_connection(
+                    ("127.0.0.1", port),
+                    timeout=1,
+                )
+                clients.append(client)
+                break
+
+            except ConnectionRefusedError:
+                time.sleep(0.01)
+
+        assert clients, "Server did not start accepting connections"
+
+        for _ in range(2):
+            client = socket.create_connection(
+                ("127.0.0.1", port),
+                timeout=2,
+            )
+            clients.append(client)
+
+        assert all_workers_started.wait(timeout=5), (
+            "Not all client workers started"
+        )
+
+        shutdown_event.set()
+
+        server_thread.join(timeout=5)
+
+        assert not server_thread.is_alive(), (
+            "Server thread did not terminate"
+        )
+
+        with worker_threads_lock:
+            completed_workers = list(worker_threads)
+
+        assert len(completed_workers) == 3
+
+        assert all(
+            not worker.is_alive()
+            for worker in completed_workers
+        ), "One or more client workers are still running"
+
+    finally:
+        shutdown_event.set()
+
+        for client in clients:
+            client.close()
+
+        server_thread.join(timeout=5)
+
     assert not server_thread.is_alive()
