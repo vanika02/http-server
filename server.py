@@ -1,5 +1,6 @@
 import threading
 import socket
+import logging
 
 from router import route
 from request_parser import HTTPRequest, parse_request_head
@@ -10,6 +11,8 @@ from config import ServerConfig
 
 HOST = '127.0.0.1'
 PORT = 8080
+
+logger = logging.getLogger(__name__)
 
 def _read_one_request(sock, buffer, config):
 
@@ -385,4 +388,9 @@ def handle_client(client_socket, config):
         client_socket.close()
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
     run_server()
