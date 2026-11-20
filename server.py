@@ -200,7 +200,7 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
     client_sockets = {}
     workers_lock = threading.Lock()
 
-    print(f"server running on http://{HOST}:{PORT}")
+    logger.info("Server listening on http://%s:%s", host, port)
 
     try:
         while not shutdown_event.is_set():
@@ -216,7 +216,7 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
                     break
                 raise 
 
-            print(f"Connection from {client_address}")
+            logger.info("Accepted connection from %s", client_address)
 
             client_thread = threading.Thread(
                 target=_client_worker,
@@ -237,7 +237,7 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
             try:
                 client_thread.start()
 
-            except Expection:
+            except Exception:
                 with workers_lock:
                     workers.discard(client_thread)
                     client_sockets.pop(client_thread, None)
@@ -246,7 +246,7 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
                 raise
     
     except KeyboardInterrupt:
-        print("\nShutdown requested")
+        logger.info("shutdown requested by keyboard interrupt")
 
     finally:
         _shutdown_server(
@@ -323,7 +323,7 @@ def handle_client(client_socket, config):
                 break 
 
             except (HeaderReadTimeout, BodyReadTimeout) as exc:
-                print(f"Request timed out: {exc}")
+                logger.warning("Request timed out: %s", exc)
 
                 response = HTTPResponse(
                     status_code=408,
@@ -345,21 +345,11 @@ def handle_client(client_socket, config):
             )
 
             connection = request.headers.get("connection", "").lower()
-
-            print("DEBUG headers:", repr(request.headers))
-            print("DEBUG version:", repr(request.http_version))
-            print("DEBUG connection:", repr(connection))
             
             if request.http_version == "HTTP/1.1":
                 should_close = connection == "close"
             else:
                 should_close = connection != "keep-alive"
-
-            print("Method:", request.method)
-            print("Path:", request.path)
-            print("Expected body length:", request.headers.get("content-length"))
-            print("Actual parsed body length:", len(request.body))
-            print("Content-Length header:", request.headers.get("content-length"))
 
             method = request.method
             path = request.path
