@@ -20,12 +20,14 @@ class HTTPResponse:
 
     def __init__(self, status_code=200, headers=None, body="", http_version="HTTP/1.1"):
 
+        if not isinstance(status_code, int) or not 100 <= status_code <= 599:
+            raise ValueError("Invalid HTTP status code")
+
         self.http_version = http_version
         self.status_code = status_code
         self.reason = self.STATUS_CODES.get(status_code, "Unknown Status")
 
         self.headers = headers.copy() if headers else {}
-
         self.body = body
 
     def build(self):
