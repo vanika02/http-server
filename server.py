@@ -19,12 +19,10 @@ def _read_one_request(sock, buffer, config):
     """Read and extract exactly one HTTP request."""
     
     while True:
-
         try:
             header_end = buffer.find(config.header_delimiter)
 
             if header_end != -1:
-                # the delimiter marks the end of the header block
                 if header_end > config.max_header_size:
                     raise HTTPRequestTooLarge("Request headers are too large")
 
@@ -88,7 +86,7 @@ def _read_one_request(sock, buffer, config):
 
         raw_request = (
             header_bytes
-            + b"\r\n\r\n"
+            + config.header_delimiter
             + request_body
         )
 
@@ -178,7 +176,7 @@ def _shutdown_server(
     else:
         logger.info("All client workers terminated")
     
-    logger.info("Server shutdown finished")
+    logger.info("Server listener closed")
 
 def run_server(host=HOST, port=PORT, shutdown_event=None):
 
@@ -189,22 +187,24 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    server_socket.bind((host, port))
-    server_socket.listen(10)
-
-    server_socket.settimeout(0.5)
-
     workers = set()
     client_sockets = {}
     workers_lock = threading.Lock()
-
-    logger.info("Server listening on http://%s:%s", host, port)
-
+    
     try:
-        while not shutdown_event.is_set():
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
+        server_socket.bind((host, port))
+        server_socket.listen(10)
+        server_socket.settimeout(0.5)
+
+        logger.info(
+            "Server listening on http://%s:%s",
+            host,
+            port
+        )
+
+        while not shutdown_event.is_set():
             try:
                 client_socket, client_address = server_socket.accept()
             
@@ -344,16 +344,19 @@ def handle_client(client_socket, config):
                 body=body
             )
 
+            logger.info(
+                "Request received: method=%s path=%s version=%s",
+                request.method,
+                request.path,
+                request.http_version
+            )
+
             connection = request.headers.get("connection", "").lower()
             
             if request.http_version == "HTTP/1.1":
                 should_close = connection == "close"
             else:
                 should_close = connection != "keep-alive"
-
-            method = request.method
-            path = request.path
-            body = request.body
 
             status, content_type, response_body, extra_headers = route(
                 method, path, body
@@ -374,7 +377,11 @@ def handle_client(client_socket, config):
 
             response_bytes = response.build()
 
-            print("Sending response:", response_bytes[:100])
+            logger.debug(
+                "Response sent: status=%s bytes=%s",
+                status,
+                len(response_bytes),
+            )
             
             client_socket.sendall(response_bytes)
 
