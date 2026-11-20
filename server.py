@@ -124,7 +124,10 @@ def _client_worker(
         handle_client(client_socket, config)
     
     except (ConnectionError, OSError):
-        pass 
+        logger.debug("Client connection ended unexpectedly")
+    
+    except Exception:
+        logger.exception("Unexpected error in client worker")
     
     finally:
         with workers_lock:
