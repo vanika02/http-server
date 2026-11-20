@@ -106,19 +106,40 @@ def _read_one_request(sock, buffer, config):
         request_body
     )
 
+def _client_worker(
+    client_socket,
+    config,
+    workers,
+    client_sockets,
+    workers_lock
+):
+    """Run one client handler and clean up its tracking state."""
+
+    current_thread = threading.current_thread()
+
+    try:
+        handle_client(client_socket, config)
+    
+    except (ConnectionError, OSError):
+        pass 
+    
+    finally:
+        with workers_lock:
+            workers.discard(current_thread)
+            client_sockets.pop(current_thread, None)
+
 def run_server(host=HOST, port=PORT):
 
     config = ServerConfig()
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    server_socket.setsocket(socket.SQL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.setsockopt(socket.SQL_SOCKET, socket.SO_REUSEADDR, 1)
 
     server_socket.bind((host, port))
     server_socket.listen(10)
 
-    shutdown_event = threading.Event()
-    workers = set()
+    workers = {}
     workers_lock = threading.Lock()
 
     print(f"server running on http://{HOST}:{PORT}")
