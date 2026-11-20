@@ -171,9 +171,14 @@ def _shutdown_server(
     ]
 
     if still_running:
-        print("Warning: workers still running:", still_running)
+        logger.warning(
+            "Shutdown timed out. Workers still running: %s",
+            still_running,
+        )
+    else:
+        logger.info("All client workers terminated")
     
-    print("Server shutdown complete")
+    logger.info("Server shutdown finished")
 
 def run_server(host=HOST, port=PORT, shutdown_event=None):
 
