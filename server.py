@@ -169,9 +169,12 @@ def _shutdown_server(
     
     print("Server shutdown complete")
 
-def run_server(host=HOST, port=PORT):
+def run_server(host=HOST, port=PORT, shutdown_event=None):
 
     config = ServerConfig()
+
+    if shutdown_event is None:
+        shutdown_event = threading.Event()
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -179,6 +182,8 @@ def run_server(host=HOST, port=PORT):
 
     server_socket.bind((host, port))
     server_socket.listen(10)
+
+    server_socket.settimeout(0.5)
 
     workers = set()
     client_sockets = {}
@@ -191,6 +196,9 @@ def run_server(host=HOST, port=PORT):
 
             try:
                 client_socket, client_address = server_socket.accept()
+            
+            except socket.timeout:
+                continue
             
             except OSError:
                 if shutdown_event.is_set():
@@ -217,6 +225,7 @@ def run_server(host=HOST, port=PORT):
             
             try:
                 client_thread.start()
+
             except Expection:
                 with workers_lock:
                     workers.discard(client_thread)
@@ -229,25 +238,13 @@ def run_server(host=HOST, port=PORT):
         print("\nShutdown requested")
 
     finally:
-        shutdown_event.set()
-        server_socket.close()
-
-        with workers_lock:
-            active_workers = list(workers)
-            active_sockets = list(client_sockets.values())
-        
-        for client_socket in active_sockets:
-            try:
-                client_socket.shutdown(socket.SHUT_RDWR)
-            except OSError:
-                pass 
-            
-            client_socket.close()
-
-        for worker in active_workers:
-            worker.join()
-
-        print("Server shutdown complete")
+        _shutdown_server(
+            server_socket,
+            shutdown_event,
+            workers,
+            client_sockets,
+            workers_lock
+        )
 
 def handle_client(client_socket, config):
 
