@@ -139,13 +139,15 @@ def run_server(host=HOST, port=PORT):
     server_socket.bind((host, port))
     server_socket.listen(10)
 
-    workers = {}
+    workers = set()
+    client_sockets = {}
     workers_lock = threading.Lock()
 
     print(f"server running on http://{HOST}:{PORT}")
 
     try:
         while not shutdown_event.is_set():
+
             try:
                 client_socket, client_address = server_socket.accept()
             
@@ -157,15 +159,30 @@ def run_server(host=HOST, port=PORT):
             print(f"Connection from {client_address}")
 
             client_thread = threading.Thread(
-                target=handle_client,
-                args=(client_socket, config),
+                target=_client_worker,
+                args=(
+                    client_socket,
+                    config,
+                    workers,
+                    client_sockets,
+                    workers_lock
+                ),
                 daemon=False 
             )
 
             with workers_lock:
                 workers.add(client_thread)
-
-            client_thread.start()
+                client_sockets[client_thread] = client_socket
+            
+            try:
+                client_thread.start()
+            except Expection:
+                with workers_lock:
+                    workers.discard(client_thread)
+                    client_sockets.pop(client_thread, None)
+                
+                client_socket.close()
+                raise
     
     except KeyboardInterrupt:
         print("\nShutdown requested")
@@ -176,6 +193,15 @@ def run_server(host=HOST, port=PORT):
 
         with workers_lock:
             active_workers = list(workers)
+            active_sockets = list(client_sockets.values())
+        
+        for client_socket in active_sockets:
+            try:
+                client_socket.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass 
+            
+            client_socket.close()
 
         for worker in active_workers:
             worker.join()
