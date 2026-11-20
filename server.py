@@ -146,7 +146,7 @@ def _shutdown_server(
 
     for client_socket in active_sockets:
         try:
-            client_socket.shutdown(socket.SHUT.RDWR)
+            client_socket.shutdown(socket.SHUT_RDWR)
         except OSError:
             pass 
         
@@ -178,7 +178,7 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    server_socket.setsockopt(socket.SQL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     server_socket.bind((host, port))
     server_socket.listen(10)
