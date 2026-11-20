@@ -190,7 +190,7 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
     workers = set()
     client_sockets = {}
     workers_lock = threading.Lock()
-    
+
     try:
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -359,7 +359,9 @@ def handle_client(client_socket, config):
                 should_close = connection != "keep-alive"
 
             status, content_type, response_body, extra_headers = route(
-                method, path, body
+                request.method,
+                request.path,
+                request.body
             )
             
             response_headers = {
