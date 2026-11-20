@@ -128,6 +128,47 @@ def _client_worker(
             workers.discard(current_thread)
             client_sockets.pop(current_thread, None)
 
+def _shutdown_server(
+    server_socket,
+    shutdown_event,
+    workers,
+    client_sockets,
+    workers_lock
+):
+    """Stop accepting connections and terminate active client workers."""
+
+    shutdown_event.set()
+    server_socket.close()
+
+    with workers_lock:
+        active_workers = list(workers)
+        active_sockets = list(client_sockets.values())
+
+    for client_socket in active_sockets:
+        try:
+            client_socket.shutdown(socket.SHUT.RDWR)
+        except OSError:
+            pass 
+        
+        try:
+            client_socket.close()
+        except OSError:
+            pass 
+        
+    for worker in active_workers:
+        worker.join(timeout=3)
+
+    still_running = [
+        worker.name 
+        for worker in active_workers
+        if worker.is_alive()
+    ]
+
+    if still_running:
+        print("Warning: workers still running:", still_running)
+    
+    print("Server shutdown complete")
+
 def run_server(host=HOST, port=PORT):
 
     config = ServerConfig()
