@@ -74,7 +74,7 @@ class HTTPResponse:
             f"{self.http_version} {self.status_code} {self.reason}"
         ]
 
-        for key, value in self.headers.items():
+        for key, value in headers.items():
             response.append(
                 f"{key}: {value}"
             )
