@@ -1,7 +1,8 @@
 import json
 import pytest 
-
 import handlers
+
+from concurrent.futures import ThreadPoolExecutor
 
 @pytest.fixture(autouse=True)
 def reset_users():
@@ -78,4 +79,10 @@ def test_login_invalid_json():
     status, _, body = handlers.login("{invalid}")
 
     assert status == 400
+    assert json.loads(body)["message"] == "Invalid JSON"
+
+def test_signup_invalid_utf8():
+    status, _, body = handlers.signup(b"\xff\xfe\xfa")
+
+    assert status == 400 
     assert json.loads(body)["message"] == "Invalid JSON"
