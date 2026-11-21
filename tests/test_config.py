@@ -22,7 +22,7 @@ def test_custom_config_value():
     assert config.max_header_size == 8192
     assert config.max_body_size == 512 * 1024
 
-@pytest.mark.parameterize("kwargs", [
+@pytest.mark.parametrize("kwargs", [
     {"socket_timeout": -1},
     {"socket_timeout": 0},
     {"max_header_size": -1},
