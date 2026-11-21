@@ -118,3 +118,23 @@ def test_login_unknown_user():
 
     assert status == 401
     assert json.loads(body)["message"] == "Invalid credentials"
+
+def test_concurrent_signup_same_username():
+    body = '{"username": "Rani", "password": "1234"}'
+
+    barrier = threading.Barrier(2)
+
+    def register():
+        barrier.wait()
+        return handlers.signup(body)[0]
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        futures = [
+            executor.submit(register)
+            for _ in range(2)
+        ]
+
+        statuses = [future.result() for future in futures]
+    
+    assert sorted(statuses) == [201, 409]
+    assert list(handlers.users.keys()) == ["Rani"]
