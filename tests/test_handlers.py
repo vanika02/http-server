@@ -1,12 +1,19 @@
 import json
 import pytest 
 import handlers
+import threading
 
 from concurrent.futures import ThreadPoolExecutor
 
 @pytest.fixture(autouse=True)
 def reset_users():
-    handlers.users.clear()
+    with handlers.users_lock:
+        handlers.users.clear()
+    
+    yield
+
+    with handlers.users_lock:
+        handlers.users.clear()
 
 def test_signup_success():
     status, content_type, body = handlers.signup(
