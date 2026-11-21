@@ -22,12 +22,13 @@ ROUTES = {
 
 def route(method, path, body=""):
     """Find and execute the handler for an HTTP request."""
-    
-    if path not in ROUTES:
-        status, content_type, response_body = not_found()
-        return status, content_type, response_body, {}
 
-    allowed_methods = ROUTES[path]
+    route_path = urlsplit(path).path 
+
+    if route_path not in ROUTES:
+        return (*not_found(), {})
+
+    allowed_methods = ROUTES[route_path]
 
     if method not in allowed_methods:
         return (
