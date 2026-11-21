@@ -1,7 +1,3 @@
-
-README · MD
-
-
 # Building an HTTP Server from Scratch in Python
  
 A lightweight HTTP server implemented from scratch using Python TCP sockets. The project explores how web servers handle network connections, parse HTTP requests, route requests, and construct responses without relying on a web framework.
