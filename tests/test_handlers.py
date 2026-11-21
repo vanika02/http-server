@@ -110,3 +110,11 @@ def test_signup_empty_password():
 
     assert status == 400
     assert json.loads(body)["message"] == "Missing or invalid password"
+
+def test_login_unknown_user():
+    status, _, body = handlers.login(
+        '{"username": "unknown", "password": "1234"}'
+    )
+
+    assert status == 401
+    assert json.loads(body)["message"] == "Invalid credentials"
