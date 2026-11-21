@@ -1,3 +1,5 @@
+import pytest 
+
 from config import ServerConfig
 
 def test_default_config_value():
