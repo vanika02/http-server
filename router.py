@@ -1,3 +1,5 @@
+from urllib.parse import urlsplit
+
 from handlers import home, about, api, not_found, login, signup
 
 ROUTES = {
@@ -19,6 +21,7 @@ ROUTES = {
 }
 
 def route(method, path, body=""):
+    """Find and execute the handler for an HTTP request."""
     
     if path not in ROUTES:
         status, content_type, response_body = not_found()
