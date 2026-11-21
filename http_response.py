@@ -31,6 +31,7 @@ class HTTPResponse:
         self.body = body
 
     def build(self):
+        """Serialize the response into HTTP response bytes."""
         
         body_bytes = self.body.encode("utf-8")
         headers = self.headers.copy()
