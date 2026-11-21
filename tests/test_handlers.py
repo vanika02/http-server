@@ -86,3 +86,11 @@ def test_signup_invalid_utf8():
 
     assert status == 400 
     assert json.loads(body)["message"] == "Invalid JSON"
+
+def test_signup_missing_username():
+    status, _, body = handlers.signup(
+        '{"password": "1234"}'
+    )
+
+    assert status == 400
+    assert json.loads(body)["message"] == "Missing or invalid username"
