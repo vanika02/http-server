@@ -38,35 +38,37 @@ class HTTPResponse:
 
         if self.status_code == 204:
             body_bytes = b""
-            headers.pop("Content-Length", None)
-        
+            
+            headers = {
+                key: value
+                for key, value in headers.items()
+                if key.lower() != "content-length"
+            }
         else:
-            self.headers.setdefault(
-                "Content-Length",
-                str(len(body_bytes))
-            )
+            if not any(
+                key.lower() == "content-length"
+                for key in headers
+            ):
+                headers["Content-Length"] = str(len(body_bytes))
+            
+            if not any(
+                key.lower() == "content-type"
+                for key in headers
+            ):
+                headers["Content-Type"] = (
+                    "text/plain; charset=utf-8"
+                )
+        
+        if not any(key.lower() == "connection" for key in headers):
+            headers["Connection"] = "close"
+        
+        if not any(key.lower() == "server" for key in headers):
+            headers["Server"] = "VanikaHTTP/1.1"
 
-            self.headers.setdefault(
-                "Content-Type",
-                "text/plain; charset=utf-8"
-            )
-
-        self.headers.setdefault(
-            "Connection",
-            "close"
-        )
-
-        self.headers.setdefault(
-            "Server",
-            "VanikaHTTP/1.1"
-        )
-
-        self.headers.setdefault(
-            "Date",
-            datetime.now(timezone.utc).strftime(
-                "%a, %d, %b, %Y %H:%M:%S GMT"
-            )
-        )
+        if not any(key.lower() == "date" for key in headers):
+            headers["Date"] = datetime.now(
+                timezone.utc
+            ).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
         response = [
             f"{self.http_version} {self.status_code} {self.reason}"
