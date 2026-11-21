@@ -94,3 +94,11 @@ def test_signup_missing_username():
 
     assert status == 400
     assert json.loads(body)["message"] == "Missing or invalid username"
+
+def test_signup_empty_username():
+    status, _, body = handlers.signup(
+        '{"username": "     ", "password": "1234"}'
+    )
+
+    assert status == 400
+    assert json.loads(body)["message"] == "Missing or invalid username"
