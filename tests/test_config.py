@@ -19,3 +19,21 @@ def test_custom_config_value():
     assert config.socket_timeout == 0.1
     assert config.max_header_size == 8192
     assert config.max_body_size == 512 * 1024
+
+@pytest.mark.parameterize("kwargs", [
+    {"socket_timeout": -1},
+    {"socket_timeout": 0},
+    {"max_header_size": -1},
+    {"max_header_size": 0},
+    {"max_body_size": -1},
+    {"header_delimiter": b""}
+])
+def test_invalid_configuration(kwargs):
+    with pytest.raises(ValueError):
+        ServerConfig(**kwargs)
+
+def test_configuration_is_immutable():
+    config = ServerConfig()
+
+    with pytest.raises(AttributeError):
+        config.max_body_size = 100
