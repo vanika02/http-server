@@ -25,7 +25,7 @@ def parse_user_data(body):
 
     try:
         data = json.loads(body)
-    except json.JSONDecodeError as exc:
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
         raise ValueError("Invalid JSON") from exc 
     
     if not isinstance(data, dict):
@@ -91,7 +91,7 @@ def signup(body):
         if username in users:
             return json_response(409, "User already exists")
 
-    users[username] = password
+        users[username] = password
 
     # print("USERS AFTER:", users)
 
