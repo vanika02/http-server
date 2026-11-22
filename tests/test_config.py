@@ -39,3 +39,27 @@ def test_configuration_is_immutable():
 
     with pytest.raises(AttributeError):
         config.max_body_size = 100
+
+from pathlib import Path
+
+from config import ServerConfig
+
+
+def test_static_root_defaults_to_project_static_directory():
+    config = ServerConfig()
+
+    expected = Path(__file__).resolve().parents[1] / "static"
+
+    assert config.static_root == expected
+
+
+def test_static_root_accepts_custom_path(tmp_path):
+    config = ServerConfig(static_root=tmp_path)
+
+    assert config.static_root == tmp_path.resolve()
+
+
+def test_static_root_is_absolute():
+    config = ServerConfig()
+
+    assert config.static_root.is_absolute()

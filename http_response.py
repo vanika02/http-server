@@ -30,38 +30,36 @@ class HTTPResponse:
         self.headers = headers.copy() if headers else {}
         self.body = body
 
+    
     def build(self):
         """Serialize the response into HTTP response bytes."""
-        
-        body_bytes = self.body.encode("utf-8")
+
+        if isinstance(self.body, bytes):
+            body_bytes = self.body
+        elif isinstance(self.body, str):
+            body_bytes = self.body.encode("utf-8")
+        else:
+            raise TypeError("Response body must be str or bytes")
+
         headers = self.headers.copy()
 
         if self.status_code == 204:
             body_bytes = b""
-            
             headers = {
                 key: value
                 for key, value in headers.items()
                 if key.lower() != "content-length"
             }
         else:
-            if not any(
-                key.lower() == "content-length"
-                for key in headers
-            ):
+            if not any(key.lower() == "content-length" for key in headers):
                 headers["Content-Length"] = str(len(body_bytes))
-            
-            if not any(
-                key.lower() == "content-type"
-                for key in headers
-            ):
-                headers["Content-Type"] = (
-                    "text/plain; charset=utf-8"
-                )
-        
+
+            if not any(key.lower() == "content-type" for key in headers):
+                headers["Content-Type"] = "text/plain; charset=utf-8"
+
         if not any(key.lower() == "connection" for key in headers):
             headers["Connection"] = "close"
-        
+
         if not any(key.lower() == "server" for key in headers):
             headers["Server"] = "VanikaHTTP/1.1"
 
@@ -75,10 +73,8 @@ class HTTPResponse:
         ]
 
         for key, value in headers.items():
-            response.append(
-                f"{key}: {value}"
-            )
-        
+            response.append(f"{key}: {value}")
+
         response.append("")
 
         header_bytes = "\r\n".join(response).encode("utf-8")

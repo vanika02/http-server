@@ -53,3 +53,29 @@ def test_204_no_content_has_no_body():
 
     assert header_bytes.startswith(b"HTTP/1.1 204 No Content")
     assert body_bytes == b""
+
+
+def test_response_supports_binary_body():
+    body = bytes([0, 255, 128, 10, 65])
+
+    response = HTTPResponse(
+        status_code=200,
+        headers={"Content-Type": "application/octet-stream"},
+        body=body,
+    )
+
+    result = response.build()
+    headers, response_body = result.split(b"\r\n\r\n", 1)
+
+    assert b"Content-Length: 5" in headers
+    assert response_body == body
+
+
+def test_response_rejects_unsupported_body_type():
+    response = HTTPResponse(
+        status_code=200,
+        body={"message": "hello"},
+    )
+
+    with pytest.raises(TypeError):
+        response.build()
