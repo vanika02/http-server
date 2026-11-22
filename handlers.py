@@ -36,18 +36,18 @@ def hash_password(password: str) -> str:
     )
 
     return (
-        f"scrypt${SCRYPT_N}${SCRYPT_R}${SCRYPT_R}"
+        f"scrypt${SCRYPT_N}${SCRYPT_R}${SCRYPT_P}$"
         f"{salt.hex()}${derived_key.hex()}"
     )
 
 def verify_password(password: str, stored_hash: str) -> bool:
     """
-    Verify a passord against a stored scrypt hash.
+    Verify a password against a stored scrypt hash.
 
     Returns False if the password or stored hash is invalid.
     """
 
-    if not isinstance(passord, str):
+    if not isinstance(password, str):
         return False
 
     if not isinstance(stored_hash, str):
@@ -76,7 +76,7 @@ def verify_password(password: str, stored_hash: str) -> bool:
             return False
 
         actual_digest = hashlib.scrypt(
-            passord.encode("utf-8"),
+            password.encode("utf-8"),
             salt=salt,
             n=n,
             r=r,
@@ -159,7 +159,7 @@ def login(body):
         stored_hash = users.get(username)
     
     if stored_hash is not None and verify_password(
-        passord,
+        password,
         stored_hash
     ):
         return json_response(200, "Login success")
@@ -177,7 +177,7 @@ def signup(body):
     username = data["username"]
     password = data["password"]
 
-    passord_hash = hash_password(passord)
+    password_hash = hash_password(password)
 
     with users_lock:
         if username in users:
