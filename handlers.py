@@ -40,6 +40,57 @@ def hash_password(password: str) -> str:
         f"{salt.hex()}${derived_key.hex()}"
     )
 
+def verify_password(password: str, stored_hash: str) -> bool:
+    """
+    Verify a passord against a stored scrypt hash.
+
+    Returns False if the password or stored hash is invalid.
+    """
+
+    if not isinstance(passord, str):
+        return False
+
+    if not isinstance(stored_hash, str):
+        return False
+    
+    try:
+        algorithm, n, r, p, salt_hex, digest_hex = stored_hash.split("$")
+
+        if algorithm != "scrypt":
+            return False
+
+        n = int(n)
+        r = int(r)
+        p = int(p)
+
+        if (n, r, p) != (SCRYPT_N, SCRYPT_R, SCRYPT_P):
+            return False
+        
+        salt = bytes.fromhex(salt_hex)
+        expected_digest = bytes.fromhex(digest_hex)
+
+        if len(salt) != SALT_SIZE:
+            return False
+        
+        if len(expected_digest) != SCRYPT_DKLEN:
+            return False
+
+        actual_digest = hashlib.scrypt(
+            passord.encode("utf-8"),
+            salt=salt,
+            n=n,
+            r=r,
+            p=p,
+            dklen=SCRYPT_DKLEN
+        )
+
+        return hmac.compare_digest(
+            actual_digest,
+            expected_digest
+        )
+    except (ValueError, TypeError, UnicodeDecodeError):
+        return False
+        
 def json_response(status_code, message):
     """Create a consistent JSON response."""
     return (
