@@ -89,9 +89,11 @@ def test_concurrent_signup_same_username():
 
     for thread in threads:
         thread.join(timeout=3)
+
+    stored_hash = handlers.users["Rani"]
     
     assert all(not thread.is_alive() for thread in threads)
     assert results.count(201) == 1
     assert results.count(409) == 4
-    assert handlers.users["Rani"] == "1234"
+    assert handlers.verify_password("1234",stored_hash)
 
