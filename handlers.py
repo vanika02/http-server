@@ -90,9 +90,10 @@ def verify_password(password: str, stored_hash: str) -> bool:
         )
     except (ValueError, TypeError, UnicodeDecodeError):
         return False
-        
+
 def json_response(status_code, message):
     """Create a consistent JSON response."""
+
     return (
         status_code,
         "application/json",
@@ -103,15 +104,13 @@ def parse_user_data(body):
     """
     Parse and validate the request body.
 
-    Returns:
-        dict: Validated user data.
-
     Raises:
         ValueError: If JSON is invalid or not a JSON object.
     """
 
     try:
         data = json.loads(body)
+
     except (json.JSONDecodeError, UnicodeDecodeError) as exc:
         raise ValueError("Invalid JSON") from exc 
     
@@ -149,6 +148,7 @@ def api():
 def login(body):
     try:
         data = parse_user_data(body)
+
     except ValueError as exc:
         return json_response(400, str(exc))
 
@@ -156,31 +156,34 @@ def login(body):
     password = data["password"]
 
     with users_lock:
-        valid_credentials = (
-            username in users and users[username] == password
-        )
-
-    if valid_credentials:
+        stored_hash = users.get(username)
+    
+    if stored_hash is not None and verify_password(
+        passord,
+        stored_hash
+    ):
         return json_response(200, "Login success")
     
     return json_response(401, "Invalid credentials")
     
 def signup(body):
+
     try:
         data = parse_user_data(body)
+
     except ValueError as exc:
         return json_response(400, str(exc))
 
     username = data["username"]
     password = data["password"]
 
+    passord_hash = hash_password(passord)
+
     with users_lock:
         if username in users:
             return json_response(409, "User already exists")
 
-        users[username] = password
-
-    # print("USERS AFTER:", users)
+        users[username] = password_hash
 
     return json_response(201, "User created")
 
