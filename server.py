@@ -3,7 +3,12 @@ import socket
 import logging
 
 from router import route
-from request_parser import HTTPRequest, parse_request_head
+from request_parser import(
+    HTTPRequest,
+    parse_request_head,
+    read_chunked_body,
+    IncompleteChunkError
+)
 from http_response import HTTPResponse
 from exceptions import HTTPParseError, HTTPRequestTooLarge, HeaderReadTimeout, BodyReadTimeout
 from config import ServerConfig
@@ -62,28 +67,48 @@ def _read_one_request(sock, buffer, config):
     ) = parse_request_head(header_bytes)
 
     try:
-        
-        if content_length is None:
-            content_length = 0
+        if is_chunked:
+            while True:
+                try:
+                    request_body, bytes_consumed = read_chunked_body(
+                        bytes(remaining),
+                        max_body_size=config.max_body_size,
+                    )
 
-        if content_length > config.max_body_size:
-            raise HTTPRequestTooLarge(
-                "Request body is too large"
-            )
-        
-        
-        while len(remaining) < content_length:
-            chunk = sock.recv(4096)
+                    leftover = remaining[bytes_consumed:]
+                    break 
+                
+                except IncompleteChunkError:
+                    chunk = sock.recv(4096)
 
-            if not chunk:
-                raise ConnectionError(
-                    "Socket closed before complete request body."
+                    if not chunk:
+                        raise ConnectionError(
+                            "Socket closed before complete chunked body."
+                        )
+                    
+                    remaining.extend(chunk)
+        
+        else:
+            if content_length is None:
+                content_length = 0
+
+            if content_length > config.max_body_size:
+                raise HTTPRequestTooLarge(
+                    "Request body is too large"
                 )
+            
+            while len(remaining) < content_length:
+                chunk = sock.recv(4096)
 
-            remaining.extend(chunk)
-        
-        request_body = bytes(remaining[:content_length])
-        leftover = remaining[content_length:]
+                if not chunk:
+                    raise ConnectionError(
+                        "Socket closed before complete request body."
+                    )
+
+                remaining.extend(chunk)
+            
+            request_body = bytes(remaining[:content_length])
+            leftover = remaining[content_length:]
 
         raw_request = (
             header_bytes
