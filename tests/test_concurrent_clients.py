@@ -39,7 +39,7 @@ def test_multiple_clients_can_connect_concurrently():
                 responses.append(response)
         
         except Exception as exc:
-            errors.append(response)
+            errors.append(exc)
     
     clients = [
         threading.Thread(target=make_request)

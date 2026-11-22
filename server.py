@@ -58,6 +58,7 @@ def _read_one_request(sock, buffer, config):
         http_version,
         headers,
         content_length,
+        is_chunked,
     ) = parse_request_head(header_bytes)
 
     try:

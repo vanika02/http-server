@@ -86,13 +86,14 @@ def test_valid_extension_method():
         b"Host: localhost"
     )
 
-    method, path, version, headers, content_length = (
+    method, path, version, headers, content_length, is_chunked = (
         parse_request_head(request)
     )
 
     assert method == "PATCH"
     assert path == "/resource"
     assert version == "HTTP/1.1"
+    assert is_chunked is False
 
 def test_invalid_header_name_with_whitespace_before_colon():
     request = (
@@ -170,10 +171,11 @@ def test_valid_content_length():
         b"Content-Length: 25"
     )
 
-    _, _, _, headers, content_length = parse_request_head(request)
+    _, _, _, headers, content_length, is_chunked = parse_request_head(request)
 
     assert headers["content-length"] == "25"
     assert content_length == 25
+    assert is_chunked is False
 
 def test_missing_host_header():
     request = b"GET / HTTP/1.1"
@@ -206,7 +208,8 @@ def test_vaild_host_header():
         b"Host: localhost:8000"
     )
 
-    _, _, _, headers, content_length = parse_request_head(request)
+    _, _, _, headers, content_length, is_chunked = parse_request_head(request)
 
     assert headers["host"] == "localhost:8000"
     assert content_length == 0
+    assert is_chunked is False
