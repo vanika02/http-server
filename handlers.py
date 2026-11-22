@@ -1,8 +1,44 @@
+import hashlib
+import hmac
+import secrets
 import threading
 import json
 
 users = {}
 users_lock = threading.Lock()
+
+SCRYPT_N = 2**14
+SCRYPT_R = 8 
+SCRYPT_P = 1
+SCRYPT_DKLEN = 32 
+SALT_SIZE = 16
+
+def hash_password(password: str) -> str:
+    """
+    Hash a password scrypt with a randomly generated salt.
+
+    Stored format:
+        scrypt$N$r$p$salt$derived_hash
+    """
+
+    if not isinstance(password, str):
+        raise TypeError("Password must be a string")
+    
+    salt = secrets.token_bytes(SALT_SIZE)
+
+    derived_key = hashlib.scrypt(
+        password.encode("utf-8"),
+        salt=salt,
+        n=SCRYPT_N,
+        r=SCRYPT_R,
+        p=SCRYPT_P,
+        dklen=SCRYPT_DKLEN
+    )
+
+    return (
+        f"scrypt${SCRYPT_N}${SCRYPT_R}${SCRYPT_R}"
+        f"{salt.hex()}${derived_key.hex()}"
+    )
 
 def json_response(status_code, message):
     """Create a consistent JSON response."""
