@@ -210,6 +210,8 @@ CHUNK_SIZE_PATTERN = re.compile(
     rb"^[0-9A-Fa-f]+(?:;[^\r\n]*)?$"
 )
 
+class RequestBodyTooLarge(HTTPParseError):
+    """Raised when a decoded request body exceeds its size limit."""
 
 def read_chunked_body(
     data: bytes,
@@ -289,7 +291,7 @@ def read_chunked_body(
                     raise HTTPParseError("Forbidden trailer field")
 
         if len(body) + chunk_size > max_body_size:
-            raise HTTPParseError("Request body too large")
+            raise RequestBodyTooLarge("Request body too large")
 
         chunk_end = position + chunk_size
 
