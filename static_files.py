@@ -1,5 +1,5 @@
 from pathlib import Path
-from urlib.parse import unquote, urlsplit
+from urllib.parse import unquote, urlsplit
 
 STATIC_URL_PREFIX = "/static/"
 
@@ -20,7 +20,7 @@ def resolve_static_path(request_path: str, static_root: Path) -> Path:
     if "\x00" in relative_path:
         raise ValueError("Null byte in file path")
 
-    if "//" in relative_path:
+    if "\\" in relative_path:
         raise PermissionError("Invalid path seperator")
     
     parts = relative_path.split("/")
@@ -33,10 +33,10 @@ def resolve_static_path(request_path: str, static_root: Path) -> Path:
 
     try:
         candidate.relative_to(root)
-    expect ValueError as exc:
+    except ValueError as exc:
         raise PermissionError("File is outside the static root") from exc 
     
     if not candidate.is_file():
-        raise IsDirectoryError("Requested path is not a file")
+        raise IsADirectoryError("Requested path is not a file")
 
     return candidate

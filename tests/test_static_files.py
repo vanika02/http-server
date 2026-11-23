@@ -1,6 +1,6 @@
 import pytest
 
-from static_file import resolve_static_path
+from static_files import resolve_static_path
 
 def test_resolves_existing_file(tmp_path):
     static_root = tmp_path / "static"
