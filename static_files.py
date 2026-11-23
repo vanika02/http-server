@@ -1,3 +1,5 @@
+import mimetypes
+
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
@@ -40,3 +42,17 @@ def resolve_static_path(request_path: str, static_root: Path) -> Path:
         raise IsADirectoryError("Requested path is not a file")
 
     return candidate
+
+def load_static_file(request_path: str, static_root: Path) -> tuple[bytes, str]:
+    """Read a static file and return its bytes and MIME type."""
+
+    file_path = resolve_static_path(request_path, static_root)
+
+    content = file_path.read_bytes()
+
+    content_type, _ = mimetypes.guess_type(file_path.name)
+
+    if content_type is None:
+        content_type = "application/octet-stream"
+
+    return content, content_type
