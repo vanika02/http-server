@@ -64,6 +64,14 @@ def test_rejects_missing_file(tmp_path):
     with pytest.raises(FileNotFoundError):
         resolve_static_path("/static/missing.txt", static_root)
 
+def test_rejects_directory(tmp_path):
+    static_root = tmp_path / "static"
+    directory = static_root / "folder"
+    directory.mkdir(parents=True)
+
+    with pytest.raises(IsADirectoryError):
+        resolve_static_path("/static/folder", static_root)
+        
 def test_rejects_symlink_outside_static_root(tmp_path):
     static_root = tmp_path / "static"
     static_root.mkdir()
