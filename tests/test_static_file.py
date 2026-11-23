@@ -63,4 +63,16 @@ def test_rejects_missing_file(tmp_path):
 
     with pytest.raises(FileNotFoundError):
         resolve_static_path("/static/missing.txt", static_root)
-        
+
+def test_rejects_symlink_outside_static_root(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    outside_file = tmp_path / "secret.txt"
+    outside_file.write_text("secret")
+
+    link = static_root / "secret-link.txt"
+    link.symlink_to(outside_file)
+
+    with pytest.raises(PermissionError):
+        resolve_static_path("/static/secret-link.txt", static_root)
