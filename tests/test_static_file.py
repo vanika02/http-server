@@ -56,4 +56,11 @@ def test_rejects_backlash(tmp_path):
 
     with pytest.raises(PermissionError):
         resolve_static_path("/static/folder%5Csecret.txt", static_root)
+
+def test_rejects_missing_file(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    with pytest.raises(FileNotFoundError):
+        resolve_static_path("/static/missing.txt", static_root)
         
