@@ -71,7 +71,7 @@ def test_rejects_directory(tmp_path):
 
     with pytest.raises(IsADirectoryError):
         resolve_static_path("/static/folder", static_root)
-        
+
 def test_rejects_symlink_outside_static_root(tmp_path):
     static_root = tmp_path / "static"
     static_root.mkdir()
@@ -84,3 +84,10 @@ def test_rejects_symlink_outside_static_root(tmp_path):
 
     with pytest.raises(PermissionError):
         resolve_static_path("/static/secret-link.txt", static_root)
+
+def test_rejects_non_static_url(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    with pytest.raises(ValueError):
+        resolve_static_path("/about", static_root)
