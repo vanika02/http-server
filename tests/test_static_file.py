@@ -49,4 +49,11 @@ def test_rejects_null_byte(tmp_path):
 
     with pytest.raises(ValueError):
         resolve_static_path("/static/file%00.txt", static_root)
+
+def test_rejects_backlash(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    with pytest.raises(PermissionError):
+        resolve_static_path("/static/folder%5Csecret.txt", static_root)
         
