@@ -47,3 +47,16 @@ def test_static_file_returns_binary_content(tmp_path):
     assert content_type == "image/png"
     assert body == expected
     assert headers == {}
+
+def test_missing_static_file_returns_404(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    status, content_type, body, headers = route(
+        "GET",
+        "/static/missing.txt",
+        static_root=static_root
+    )
+
+    assert status == 404 
+    assert body == "404 Not Found"
