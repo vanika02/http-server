@@ -148,3 +148,10 @@ def test_unknown_extension_uses_binary_mime_type(tmp_path):
 
     assert content == b"data"
     assert content_type == "application/octet-stream"
+
+def test_load_static_file_rejects_path_traversal(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    with pytest.raises(PermissionError):
+        load_static_file("/static/../secret.txt", static_root)
