@@ -393,7 +393,8 @@ def handle_client(client_socket, config):
             status, content_type, response_body, extra_headers = route(
                 request.method,
                 request.path,
-                request.body
+                request.body,
+                static_root=config.static_root
             )
             
             response_headers = {

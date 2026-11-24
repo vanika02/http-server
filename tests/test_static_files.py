@@ -115,7 +115,8 @@ def test_loads_binary_file_without_modifying_bytes(tmp_path):
     (static_root / "image.png").write_bytes(expected)
 
     content, content_type = load_static_file(
-        "/static/image.png"
+        "/static/image.png",
+        static_root
     )
 
     assert content == expected
