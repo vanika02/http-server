@@ -176,3 +176,41 @@ def test_head_static_file_sends_headers_without_body(tmp_path):
         server_thread.join(timeout=3)
 
         assert not server_thread.is_alive()
+
+def test_head_health_sends_headers_without_body():
+    server_socket, client_socket = socket.socketpair()
+
+    config = ServerConfig(socket_timeout=2)
+
+    server_thread = threading.Thread(
+        target=handle_client,
+        args=(server_socket, config),
+    )
+
+    server_thread.start()
+
+    try:
+        request = (
+            b"HEAD /health HTTP/1.1\r\n"
+            b"Host: localhost\r\n"
+            b"Connection: close\r\n"
+            b"\r\n"
+        )
+
+        client_socket.sendall(request)
+
+        status, headers, body = receive_response(
+            client_socket,
+            method="HEAD",
+        )
+
+        assert status == "HTTP/1.1 200 OK"
+        assert headers["content-type"] == "application/json"
+        assert int(headers["content-length"]) == len(
+            b'{"status": "ok"}'
+        )
+        assert body == b""
+
+    finally:
+        client_socket.close()
+        server_thread.join(timeout=2)

@@ -190,3 +190,11 @@ def signup(body):
     
 def not_found():
     return 404, "text/plain", "404 Not Found"
+
+def health():
+    """Return the server health status."""
+    return (
+        200,
+        "application/json",
+        '{"status": "ok"}'
+    )

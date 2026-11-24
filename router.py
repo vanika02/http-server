@@ -1,7 +1,7 @@
 from urllib.parse import urlsplit
 
 from static_files import load_static_file
-from handlers import home, about, api, not_found, login, signup
+from handlers import home, about, api, not_found, login, signup, health
 
 
 STATIC_URL_PREFIX = "/static/"
@@ -12,6 +12,7 @@ ROUTES = {
     "/api": {"GET": api},
     "/login": {"POST": login},
     "/signup": {"POST": signup},
+    "/health": {"GET": health}
 }
 
 

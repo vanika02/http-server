@@ -63,3 +63,24 @@ def test_static_root_is_absolute():
     config = ServerConfig()
 
     assert config.static_root.is_absolute()
+
+def test_max_connections_default():
+    config = ServerConfig()
+
+    assert config.max_connections == 50
+
+
+def test_max_connections_custom_value():
+    config = ServerConfig(max_connections=10)
+
+    assert config.max_connections == 10
+
+
+def test_max_connections_must_be_positive():
+    with pytest.raises(ValueError):
+        ServerConfig(max_connections=0)
+
+
+def test_max_connections_cannot_be_negative():
+    with pytest.raises(ValueError):
+        ServerConfig(max_connections=-1)

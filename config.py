@@ -7,6 +7,7 @@ class ServerConfig:
         max_header_size: int = 16 * 1024
         max_body_size: int = 1 * 1024 * 1024
         header_delimiter: bytes = b"\r\n\r\n"
+        max_connections: int = 50
 
         static_root: Path = field(
             default_factory=lambda: Path(__file__).resolve().parent / "static"
@@ -24,6 +25,9 @@ class ServerConfig:
 
             if not self.header_delimiter:
                 raise ValueError("header_delimiter cannot be empty")
+            
+            if self.max_connections <= 0:
+                raise ValueError("max_connections must be greater than 0")
 
             object.__setattr__(
                 self, 

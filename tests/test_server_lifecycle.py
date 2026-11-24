@@ -14,6 +14,11 @@ def test_client_worker_removes_itself_after_disconnect():
     workers_lock = threading.Lock()
 
     config = ServerConfig()
+    connection_slots = threading.BoundedSemaphore(
+        config.max_connections
+    )
+    
+    assert connection_slots.acquire(blocking=False)
 
     worker = threading.Thread(
         target=_client_worker,
@@ -23,6 +28,7 @@ def test_client_worker_removes_itself_after_disconnect():
             workers,
             client_sockets,
             workers_lock,
+            connection_slots
         ),
     )
 

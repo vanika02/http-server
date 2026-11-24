@@ -144,7 +144,8 @@ def _client_worker(
     config,
     workers,
     client_sockets,
-    workers_lock
+    workers_lock,
+    connection_slots
 ):
     """Run one client handler and clean up its tracking state."""
 
@@ -163,6 +164,8 @@ def _client_worker(
         with workers_lock:
             workers.discard(current_thread)
             client_sockets.pop(current_thread, None)
+        
+        connection_slots.release()
 
 def _shutdown_server(
     server_socket,
@@ -210,9 +213,10 @@ def _shutdown_server(
     
     logger.info("Server listener closed")
 
-def run_server(host=HOST, port=PORT, shutdown_event=None):
+def run_server(host=HOST, port=PORT, shutdown_event=None, config=None):
 
-    config = ServerConfig()
+    if config is None:
+        config = ServerConfig()
 
     if shutdown_event is None:
         shutdown_event = threading.Event()
@@ -222,6 +226,9 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
     workers = set()
     client_sockets = {}
     workers_lock = threading.Lock()
+    connection_slots = threading.BoundedSemaphore(
+        config.max_connections
+    )
 
     try:
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -250,6 +257,14 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
 
             logger.info("Accepted connection from %s", client_address)
 
+            if not connection_slots.acquire(blocking=False):
+                logger.warning(
+                    "Connection limit reached. Rejecting client: %s",
+                    client_address
+                )
+                client_socket.close()
+                continue
+
             client_thread = threading.Thread(
                 target=_client_worker,
                 args=(
@@ -257,7 +272,8 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
                     config,
                     workers,
                     client_sockets,
-                    workers_lock
+                    workers_lock,
+                    connection_slots
                 ),
                 daemon=False 
             )
@@ -273,7 +289,8 @@ def run_server(host=HOST, port=PORT, shutdown_event=None):
                 with workers_lock:
                     workers.discard(client_thread)
                     client_sockets.pop(client_thread, None)
-                
+
+                connection_slots.release()
                 client_socket.close()
                 raise
     
