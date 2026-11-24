@@ -84,3 +84,19 @@ def test_max_connections_must_be_positive():
 def test_max_connections_cannot_be_negative():
     with pytest.raises(ValueError):
         ServerConfig(max_connections=-1)
+
+def test_max_static_file_size_default():
+    config = ServerConfig()
+
+    assert config.max_static_file_size == 5 * 1024 * 1024
+
+
+def test_max_static_file_size_custom_value():
+    config = ServerConfig(max_static_file_size=1024)
+
+    assert config.max_static_file_size == 1024
+
+
+def test_max_static_file_size_cannot_be_negative():
+    with pytest.raises(ValueError):
+        ServerConfig(max_static_file_size=-1)

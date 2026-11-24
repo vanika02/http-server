@@ -411,7 +411,8 @@ def handle_client(client_socket, config):
                 request.method,
                 request.path,
                 request.body,
-                static_root=config.static_root
+                static_root=config.static_root,
+                max_static_file_size=config.max_static_file_size
             )
             
             response_headers = {

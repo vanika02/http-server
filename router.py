@@ -1,6 +1,6 @@
 from urllib.parse import urlsplit
 
-from static_files import load_static_file
+from static_files import load_static_file, StaticFileTooLarge
 from handlers import home, about, api, not_found, login, signup, health
 
 
@@ -16,7 +16,7 @@ ROUTES = {
 }
 
 
-def route(method, path, body="", static_root=None):
+def route(method, path, body="", static_root=None, max_static_file_size=5 * 1024 * 1024):
     """Find and execute the handler for an HTTP request."""
 
     route_path = urlsplit(path).path
@@ -37,7 +37,11 @@ def route(method, path, body="", static_root=None):
             response_body, content_type = load_static_file(
                 path,
                 static_root,
+                max_file_size=max_static_file_size
             )
+
+        except StaticFileTooLarge:
+            return (413, "text/plain", "413 Payload Too Large", {})
         except (FileNotFoundError, IsADirectoryError):
             return (*not_found(), {})
         except PermissionError:

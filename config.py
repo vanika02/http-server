@@ -8,6 +8,7 @@ class ServerConfig:
         max_body_size: int = 1 * 1024 * 1024
         header_delimiter: bytes = b"\r\n\r\n"
         max_connections: int = 50
+        max_static_file_size: int = 5 * 1024 * 1024
 
         static_root: Path = field(
             default_factory=lambda: Path(__file__).resolve().parent / "static"
@@ -28,6 +29,9 @@ class ServerConfig:
             
             if self.max_connections <= 0:
                 raise ValueError("max_connections must be greater than 0")
+            
+            if self.max_static_file_size < 0:
+                raise ValueError("max_statix_file_size cannot be negative")
 
             object.__setattr__(
                 self, 

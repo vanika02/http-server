@@ -1,6 +1,6 @@
 import pytest
 
-from static_files import resolve_static_path, load_static_file
+from static_files import resolve_static_path, load_static_file, StaticFileTooLarge
 
 def test_resolves_existing_file(tmp_path):
     static_root = tmp_path / "static"
@@ -156,3 +156,62 @@ def test_load_static_file_rejects_path_traversal(tmp_path):
 
     with pytest.raises(PermissionError):
         load_static_file("/static/../secret.txt", static_root)
+
+def test_static_file_at_size_limit_is_allowed(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    expected = b"12345"
+    (static_root / "test.txt").write_bytes(expected)
+
+    content, content_type = load_static_file(
+        "/static/test.txt",
+        static_root,
+        max_file_size=5,
+    )
+
+    assert content == expected
+    assert content_type == "text/plain"
+
+
+def test_static_file_above_size_limit_is_rejected(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    (static_root / "test.txt").write_bytes(b"123456")
+
+    with pytest.raises(StaticFileTooLarge):
+        load_static_file(
+            "/static/test.txt",
+            static_root,
+            max_file_size=5,
+        )
+
+
+def test_empty_static_file_allowed_with_zero_limit(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    (static_root / "empty.txt").write_bytes(b"")
+
+    content, content_type = load_static_file(
+        "/static/empty.txt",
+        static_root,
+        max_file_size=0,
+    )
+
+    assert content == b""
+
+
+def test_nonempty_static_file_rejected_with_zero_limit(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    (static_root / "test.txt").write_bytes(b"x")
+
+    with pytest.raises(StaticFileTooLarge):
+        load_static_file(
+            "/static/test.txt",
+            static_root,
+            max_file_size=0,
+        )

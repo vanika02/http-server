@@ -5,6 +5,10 @@ from urllib.parse import unquote, urlsplit
 
 STATIC_URL_PREFIX = "/static/"
 
+class StaticFileTooLarge(Exception):
+    """Raised when a static file exceeds the configured size limits."""
+    
+
 def resolve_static_path(request_path: str, static_root: Path) -> Path:
     """Resolve a static URL to a file inside the configured document root."""
 
@@ -43,10 +47,17 @@ def resolve_static_path(request_path: str, static_root: Path) -> Path:
 
     return candidate
 
-def load_static_file(request_path: str, static_root: Path) -> tuple[bytes, str]:
+def load_static_file(request_path: str, static_root: Path, max_file_size: int = 5 * 1024 * 1024) -> tuple[bytes, str]:
     """Read a static file and return its bytes and MIME type."""
 
     file_path = resolve_static_path(request_path, static_root)
+
+    file_size = file_path.stat().st_size
+
+    if file_size > max_file_size:
+        raise StaticFileTooLarge(
+            f"Static file exceeds maximum size of {max_file_size} bytes"
+        )
 
     content = file_path.read_bytes()
 

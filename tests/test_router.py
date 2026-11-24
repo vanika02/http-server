@@ -108,3 +108,20 @@ def test_head_on_static_file_returns_file_representation(tmp_path):
     assert status == 200
     assert content_type == "text/plain"
     assert body == b"Hello"
+
+
+def test_static_file_above_size_limit_returns_413(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    (static_root / "large.txt").write_bytes(b"123456")
+
+    status, content_type, body, headers = route(
+        "GET",
+        "/static/large.txt",
+        static_root=static_root,
+        max_static_file_size=5,
+    )
+
+    assert status == 413
+    assert body == "413 Payload Too Large"
