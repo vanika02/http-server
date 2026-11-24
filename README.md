@@ -8,6 +8,12 @@ The goal was to understand the backend mechanisms that frameworks such as Flask 
 
 [![Tests](https://github.com/vanika02/http-server/actions/workflows/tests.yml/badge.svg)](https://github.com/vanika02/http-server/actions/workflows/tests.yml)
 
+## Live Demo
+
+**Live URL:** https://vanika-http-server.onrender.com
+
+**Health Check:** https://vanika-http-server.onrender.com/health
+
 ## Features
 
 ### HTTP Request Handling
