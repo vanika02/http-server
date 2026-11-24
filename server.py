@@ -1,3 +1,4 @@
+import os
 import threading
 import socket
 import logging
@@ -15,8 +16,9 @@ from exceptions import HTTPParseError, HTTPRequestTooLarge, HeaderReadTimeout, B
 from config import ServerConfig
 
 
-HOST = '127.0.0.1'
-PORT = 8080
+HOST = os.getenv("HOST", "127.0.0.1")
+PORT = int(os.getenv("PORT", "8080"))
+
 
 logger = logging.getLogger(__name__)
 

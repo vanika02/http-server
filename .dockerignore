@@ -1,0 +1,13 @@
+
+.git
+.gitignore
+.venv
+venv
+__pycache__
+*.py[cod]
+.pytest_cache
+.coverage
+htmlcov
+tests
+test_client.py
+README.md
