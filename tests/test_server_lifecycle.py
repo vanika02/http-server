@@ -50,6 +50,7 @@ def test_client_worker_removes_itself_after_disconnect():
     
     server_socket.close()
 
+
 def test_run_server_shuts_down_after_client_connections():
 
     temporary_socket = socket.socket(
@@ -72,18 +73,32 @@ def test_run_server_shuts_down_after_client_connections():
         },
     )
 
-    server_thread.start()
-
     clients = []
 
     try:
+        server_thread.start()
 
-        for _ in range(3):
+        deadline = time.monotonic() + 5
+
+        while time.monotonic() < deadline:
+            try:
+                client = socket.create_connection(
+                    ("127.0.0.1", port),
+                    timeout=2
+                )
+                clients.append(client)
+                break
+
+            except ConnectionRefusedError:
+                time.sleep(0.05)
+
+        assert clients, "Server did not start accepting connections"
+
+        for _ in range(2):
             client = socket.create_connection(
                 ("127.0.0.1", port),
                 timeout=2
             )
-
             clients.append(client)
 
         shutdown_event.set()
@@ -99,10 +114,11 @@ def test_run_server_shuts_down_after_client_connections():
 
         for client in clients:
             client.close()
-        
+
         server_thread.join(timeout=5)
-    
+
     assert not server_thread.is_alive()
+
 
 def test_run_server_shuts_down_with_all_active_workers(monkeypatch):
     temporary_socket = socket.socket(
