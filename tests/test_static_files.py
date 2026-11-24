@@ -106,3 +106,17 @@ def test_loads_text_file(tmp_path):
 
     assert content == b"Hello, static files!"
     assert content_type == "text/plain"
+
+def test_loads_binary_file_without_modifying_bytes(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    expected = bytes([0, 25, 128, 10, 65])
+    (static_root / "image.png").write_bytes(expected)
+
+    content, content_type = load_static_file(
+        "/static/image.png"
+    )
+
+    assert content == expected
+    assert content_type == "image/png"
