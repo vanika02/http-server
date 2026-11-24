@@ -135,3 +135,16 @@ def test_loads_empty_file(tmp_path):
     assert content == b""
     assert content_type == "text/plain"
 
+def test_unknown_extension_uses_binary_mime_type(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    (static_root / "file.unknownxyz").write_bytes(b"data")
+
+    content, content_type = load_static_file(
+        "/static/file.unknownxyz",
+        static_root
+    )
+
+    assert content == b"data"
+    assert content_type == "application/octet-stream"
