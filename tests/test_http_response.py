@@ -79,3 +79,16 @@ def test_response_rejects_unsupported_body_type():
 
     with pytest.raises(TypeError):
         response.build()
+
+def test_head_response_preserves_content_length_but_suppresses_body():
+    response = HTTPResponse(
+        status_code=200,
+        headers={"Content-Type": "text/plain"},
+        body="Hello, world!",
+    )
+
+    result = response.build(head_only=True)
+    headers, body = result.split(b"\r\n\r\n", 1)
+
+    assert b"Content-Length: 13" in headers
+    assert body == b""

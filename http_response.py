@@ -31,7 +31,7 @@ class HTTPResponse:
         self.body = body
 
     
-    def build(self):
+    def build(self, head_only=False):
         """Serialize the response into HTTP response bytes."""
 
         if isinstance(self.body, bytes):
@@ -79,4 +79,6 @@ class HTTPResponse:
 
         header_bytes = "\r\n".join(response).encode("utf-8")
 
-        return header_bytes + b"\r\n" + body_bytes
+        response_body = b"" if head_only else body_bytes
+
+        return header_bytes + b"\r\n" + response_body

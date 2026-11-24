@@ -6,7 +6,7 @@ from config import ServerConfig
 from server import handle_client
 
 
-def receive_response(sock):
+def receive_response(sock, method="GET"):
     """Read one complete HTTP response using Content-Length."""
 
     received = bytearray()
@@ -32,13 +32,16 @@ def receive_response(sock):
 
     content_length = int(headers["content-length"])
 
-    while len(body) < content_length:
-        chunk = sock.recv(4096)
+    if method != "HEAD":
+        while len(body) < content_length:
+            chunk = sock.recv(4096)
 
-        if not chunk:
-            raise ConnectionError("Connection closed before complete body")
+            if not chunk:
+                raise ConnectionError("Connection closed before complete body")
 
-        body.extend(chunk)
+            body.extend(chunk)
+    else:
+        body.clear()
 
     return status_line, headers, bytes(body[:content_length])
 
@@ -127,3 +130,49 @@ def test_missing_static_file_through_http_server(tmp_path):
 
     assert status == "HTTP/1.1 404 Not Found"
     assert body == b"404 Not Found"
+
+def test_head_static_file_sends_headers_without_body(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    expected = b"Hello from HEAD!"
+    (static_root / "hello.txt").write_bytes(expected)
+
+    server_socket, client_socket = socket.socketpair()
+
+    config = ServerConfig(
+        socket_timeout=2,
+        static_root=static_root,
+    )
+
+    server_thread = threading.Thread(
+        target=handle_client,
+        args=(server_socket, config),
+    )
+
+    server_thread.start()
+
+    try:
+        request = (
+            b"HEAD /static/hello.txt HTTP/1.1\r\n"
+            b"Host: localhost\r\n"
+            b"Connection: close\r\n"
+            b"\r\n"
+        )
+
+        client_socket.sendall(request)
+
+        response = receive_response(client_socket, method="HEAD")
+
+        status, headers, body = response
+
+        assert status == "HTTP/1.1 200 OK"
+        assert headers["content-length"] == str(len(expected))
+        assert headers["content-type"] == "text/plain"
+        assert body == b""
+
+    finally:
+        client_socket.close()
+        server_thread.join(timeout=3)
+
+        assert not server_thread.is_alive()

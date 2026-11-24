@@ -410,7 +410,9 @@ def handle_client(client_socket, config):
                 headers=response_headers
             )
 
-            response_bytes = response.build()
+            response_bytes = response.build(
+                head_only=request.method == "HEAD"
+            )
 
             logger.debug(
                 "Response sent: status=%s bytes=%s",

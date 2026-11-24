@@ -21,12 +21,12 @@ def route(method, path, body="", static_root=None):
     route_path = urlsplit(path).path
 
     if route_path.startswith(STATIC_URL_PREFIX):
-        if method != "GET":
+        if method not in ("GET", "HEAD"):
             return (
                 405,
                 "text/plain",
                 "405 Method Not Allowed",
-                {"Allow": "GET"},
+                {"Allow": "GET, HEAD"},
             )
 
         if static_root is None:
@@ -51,15 +51,22 @@ def route(method, path, body="", static_root=None):
 
     allowed_methods = ROUTES[route_path]
 
-    if method not in allowed_methods:
+    if method == "HEAD" and "GET" in allowed_methods:
+        handler = allowed_methods["GET"]
+    elif method in allowed_methods:
+        handler = allowed_methods[method]
+    else:
+        allowed = list(allowed_methods.keys())
+
+        if "GET" in allowed_methods:
+            allowed.append("HEAD")
+
         return (
             405,
             "text/plain",
             "405 Method Not Allowed",
-            {"Allow": ", ".join(allowed_methods.keys())},
+            {"Allow": ", ".join(allowed)}
         )
-
-    handler = allowed_methods[method]
 
     if method == "POST":
         status, content_type, response_body = handler(body)

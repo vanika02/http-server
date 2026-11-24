@@ -12,7 +12,7 @@ def test_known_path_with_unsupported_method_returns_405():
 
     assert status == 405
     assert body == "405 Method Not Allowed"
-    assert headers["Allow"] == "GET"
+    assert headers["Allow"] == "GET, HEAD"
 
 def test_supported_method_calls_handler():
     status, content_type, body, headers = route("GET", "/about")
@@ -72,7 +72,7 @@ def test_static_file_rejects_unsupported_method(tmp_path):
     )
 
     assert status == 405
-    assert headers["Allow"] == "GET"
+    assert headers["Allow"] == "GET, HEAD"
 
 def test_static_file_rejects_path_traversal(tmp_path):
     static_root = tmp_path / "static"
@@ -85,3 +85,26 @@ def test_static_file_rejects_path_traversal(tmp_path):
     )
 
     assert status == 403
+
+def test_head_on_get_route_uses_get_handler():
+    status, content_type, body, headers = route("HEAD", "/about")
+
+    assert status == 200
+    assert content_type == "text/plain"
+    assert body == "This is the about page"
+
+def test_head_on_static_file_returns_file_representation(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    (static_root / "hello.txt").write_text("Hello")
+
+    status, content_type, body, headers = route(
+        "HEAD",
+        "/static/hello.txt",
+        static_root=static_root,
+    )
+
+    assert status == 200
+    assert content_type == "text/plain"
+    assert body == b"Hello"
