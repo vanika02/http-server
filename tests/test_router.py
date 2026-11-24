@@ -29,3 +29,21 @@ def test_405_allow_header_for_signup():
 
     assert status == 405
     assert headers["Allow"] == "POST"
+
+def test_static_file_returns_binary_content(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    expected = bytes([0, 255, 128, 10])
+    (static_root / "image.png").write_bytes(expected)
+
+    status, content_type, body, headers = route(
+        "GET",
+        "/static/image.png",
+        static_root=static_root
+    )
+
+    assert status == 200 
+    assert content_type == "image/png"
+    assert body == expected
+    assert headers == {}
