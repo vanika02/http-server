@@ -60,3 +60,16 @@ def test_missing_static_file_returns_404(tmp_path):
 
     assert status == 404 
     assert body == "404 Not Found"
+
+def test_static_file_rejects_unsupported_method(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    status, content_type, body, headers = route(
+        "POST",
+        "/static/file.txt",
+        static_root=static_root
+    )
+
+    assert status == 405
+    assert headers["Allow"] == "GET"
