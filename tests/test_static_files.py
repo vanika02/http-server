@@ -1,6 +1,6 @@
 import pytest
 
-from static_files import resolve_static_path
+from static_files import resolve_static_path, load_static_file
 
 def test_resolves_existing_file(tmp_path):
     static_root = tmp_path / "static"
@@ -91,3 +91,18 @@ def test_rejects_non_static_url(tmp_path):
 
     with pytest.raises(ValueError):
         resolve_static_path("/about", static_root)
+
+def test_loads_text_file(tmp_path):
+    static_root = tmp_path / "static"
+    static_root.mkdir()
+
+    file_path = static_root / "hello.txt"
+    file_path.write_text("Hello, static files!")
+
+    content, content_type = load_static_file(
+        "/static/hello.txt",
+        static_root
+    )
+
+    assert content == b"Hello, static files!"
+    assert content_type == "text/plain"
